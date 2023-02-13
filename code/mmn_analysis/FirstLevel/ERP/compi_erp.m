@@ -1,9 +1,11 @@
 function D = compi_erp(id, options, doPlot)
+% -------------------------------------------------------------------------
 % COMPI_ERP Computes ERPs for one subject from the COMPI study.
 %   IN:     id                  - subject identifier, e.g '0001'
 %           doPlot (optional)   - 1 for plotting subject's ERP and saving a
 %                               figure, 0 otherwise
 %   OUT:    D                   - preprocessed data set
+% -------------------------------------------------------------------------
 
 % plotting yes or no
 if nargin < 3
@@ -59,8 +61,6 @@ catch
 
         % get conditions
         switch options.eeg.erp.type
-            case {'phase', '2bins'}
-                condlist = compi_phase_conditions(D, options);
             
             case {'oddball', 'oddball_phases'}
                 condlist = compi_oddball_conditions(id, options.eeg.erp.type, options);
@@ -121,15 +121,6 @@ catch
                     'devStab', 'Stable Deviant', [0.2 0.6 1]; ...
                     'devVol', 'Volatile Deviant', [0.2 0.8 1]}; 
 
-            case {'phase'}
-                    triallist = {'stable1', 'Stable1 Phase', cols.magenta; ...
-                        'volatile', 'Volatile Phase', cols.cyan;...
-                        'stable2', 'Stable2 Phase', cols.lightgreen};
-
-            case {'2bins'}
-                    triallist = {'stable', 'Stable Phase', cols.magenta; ...
-                        'volatile', 'Volatile Phase', cols.cyan};
-
             otherwise
                 triallist = {'low', ['Lowest ' num2str(options.eeg.erp.percentPe) ' %'], [0 0 1]; ...
                     'high', ['Highest ' num2str(options.eeg.erp.percentPe) ' %'], [1 0 0]};
@@ -168,49 +159,6 @@ catch
 
         compi_calculate_difference_wave(Dfinal, id, factorNames{i}, options, doPlot);
 
-
-        % CC Note: currently only implemented for PEs
-%         % preparation for computing the difference wave
-%         %-- difference waves --------------------------------------------------------------------------%
-%         switch options.eeg.erp.type
-%             case {'epsilon', 'PEs'}
-%     
-%                 % determine condition order within the D object
-%                 idxLow = indtrial(Dfinal, 'low');
-%                 idxHigh = indtrial(Dfinal, 'high');
-%                 
-%                 % set weights such that we substract standard trials from deviant
-%                 % trials, give the new condition a name
-%                 weights = zeros(1, ntrials(Dfinal));
-%                 weights(idxHigh) = 1;
-%                 weights(idxLow) = -1;
-%                 condlabel = {'mmn'};
-%                 
-%                 % compute the actual contrast
-%                 Ddiff = tnueeg_contrast_over_epochs(Dfinal, weights, condlabel, options);
-%                 copy(Ddiff, fullfile(details.eeg.erp.root, factorNames{i}, ['diff_' factorNames{i} '.mat']));
-%                 disp(['Computed the difference wave for subject ' id]);
-% 
-%                 % convert EEG data
-%                 [images, ~] = tnueeg_convert2images(Ddiff, options);
-%                 disp(['Converted EEG data for subject ' id]);
-%             
-%                 % and smooth the resulting images
-%                 tnueeg_smooth_images(images, options);
-%                 disp(['Smoothed images for subject ' id]);
-% 
-%                 if doPlot
-%                     triallist = {'mmn', 'MMN', [0 1 0]};
-%                     h = tnueeg_plot_subject_ERPs(Ddiff, options.eeg.erp.electrode, triallist);
-%                     h.Children(2).Title.String = ['Subject ' id ': ' factorNames{i} ' MMN'];
-%                     savefig(h, fullfile(details.eeg.erp.erpfigs, [factorNames{i} '_diff_ERP.fig']));
-%                     saveas(gcf, fullfile(options.roots.diag_eeg, 'ERPs', [id '_' factorNames{i} '_MMN']), 'png');
-%                     fprintf('\nSaved an MMN ERP plot for subject %s\n\n', id);
-%                     close all;
-%                 end
-%             
-% 
-%         end
     end
 end
 

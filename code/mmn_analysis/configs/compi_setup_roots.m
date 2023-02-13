@@ -1,12 +1,8 @@
-function options = compi_setup_roots(task, modality, preprocStrategyValueArray, options)
+function options = compi_setup_roots(preprocStrategyValueArray, options)
 
-switch modality
-    case 'eeg'
-    options.roots.results = fullfile(options.roots.project,'results', task, modality,...
+% Main results folder
+options.roots.results = fullfile(options.roots.project,'results',...
         sprintf('preproc_strategy_%d_%d_%d_%d_%d_%d_%d_%d_%d_%d', preprocStrategyValueArray));
-    otherwise
-        options.roots.results = fullfile(options.roots.project,'results', task, modality);
-end
 
 % Subject folder
 options.roots.subjects = fullfile(options.roots.results,'subjects');
@@ -20,11 +16,17 @@ options.roots.err = fullfile(options.roots.results,'errors');
 % EEG preprocessing diagnostics root
 options.roots.diag_eeg = fullfile(options.roots.results,'diag_eeg');
 
-% ERP folder roots
-options.roots.erp = fullfile(options.roots.results,'results_erp');
+% Behavior folder roots
+options.roots.results_behav = fullfile(options.roots.results,'results_behav');
 
-% ERP folder roots
-options.roots.results_hgf = fullfile(options.roots.results,'results_hgf');
+% Results sub-folder based on analysis type
+options.roots.analysis = fullfile(options.roots.results, 'results', options.analysis.type);
+
+% ERP sub-folder root
+options.roots.erp = fullfile(options.roots.analysis,'results_erp');
+
+% HGF sub-folder root
+options.roots.results_hgf = fullfile(options.roots.analysis,'results_hgf');
 
 %% Create folders
 % Result folders
@@ -32,7 +34,10 @@ mkdir(options.roots.subjects);
 mkdir(options.roots.results);
 mkdir(options.roots.log);
 mkdir(options.roots.err);
+mkdir(options.roots.results_behav);
+mkdir(options.roots.analysis);
 mkdir(options.roots.erp);
 mkdir(options.roots.results_hgf);
+
 
 return

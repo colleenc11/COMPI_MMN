@@ -10,7 +10,7 @@ function compi_preprocessing_eyeblink_correction( id, options )
 % ------------------------------------------------------------------------- 
 
 %% Get subject details
-details = compi_get_subject_details(id, options); % subject-specific information
+details = compi_get_subject_details(id, options);
 
 if ~exist(details.eeg.preproot, 'dir')
     mkdir(details.eeg.preproot);
@@ -26,31 +26,31 @@ tnueeg_display_analysis_step_header('preprocessing', 'compi', id, options.eeg.pr
 pathBefore = pwd;
 cd(details.eeg.preproot);
 
-% try
-%     % check for previous preprocessing
-%     D = spm_eeg_load(details.eeg.prepfile);
-%     disp(['Subject ' id ' has been preprocessed before.']);
-%     if options.eeg.preproc.overwrite
-%         clear D;
-%         disp('Overwriting...');
-%         error('Continue to preprocessing script');
-%     else
-%         disp('Nothing is being done.');
-%     end
-% catch
+try
+    % check for previous preprocessing
+    D = spm_eeg_load(details.eeg.prepfile);
+    disp(['Subject ' id ' has been preprocessed before.']);
+    if options.eeg.preproc.overwrite
+        clear D;
+        disp('Overwriting...');
+        error('Continue to preprocessing script');
+    else
+        disp('Nothing is being done.');
+    end
+catch
     disp(['Preprocessing subject ' id ' ...']);
     
     %-- original preprocessing function ----------------------------------%
-%     D = compi_preprocessing(id, options);
-%     
-%     %-- remaining artefact rejection -------------------------------------%
-%     D = tnueeg_reject_remaining_artefacts(D, options);
-%     
-%     %-- finish -----------------------------------------------------------%
-%     D = copy(D, details.eeg.prepfilename);
-% 
-%     %-- collect trial stats ----------------------------------------------%
-%     compi_count_artefacts(D, details);
+    D = compi_preprocessing(id, options);
+    
+    %-- remaining artefact rejection -------------------------------------%
+    D = tnueeg_reject_remaining_artefacts(D, options);
+    
+    %-- finish -----------------------------------------------------------%
+    D = copy(D, details.eeg.prepfilename);
+
+    %-- collect trial stats ----------------------------------------------%
+    compi_count_artefacts(D, details);
     
     %--optional:conversion and smoothing----------------------------------%
     D = spm_eeg_load(details.eeg.prepfile);
@@ -85,7 +85,6 @@ cd(details.eeg.preproot);
     cd(pathBefore);
     
     diary OFF
-% end
+end
 
 end
-%%

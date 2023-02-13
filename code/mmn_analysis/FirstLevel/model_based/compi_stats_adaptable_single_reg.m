@@ -80,12 +80,6 @@ else
 end
 
 design = getfield(load(fileDesignMatrix), 'design');
-%factors = fieldnames(design);
-% factors = options.eeg.stats.regressors;
-% factors(end+1) = {'Phase'};
-% factors(end+1) = {'Drift'};
-
-
 
 
 %% Set up GLM design and estimate job
@@ -141,22 +135,17 @@ job{iJobFcon}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File'
 
 %% Change analysis type in function
 switch type
-    case 'sensor'
-        
-        %% Set up converted Image input file dependencies for GLM
+    case 'sensor'      
+        % Set up converted Image input file dependencies for GLM
         if ~hasConvertedImages
-            % convert2Images First
-            
-            %% image conversion job
+            % convert2Images First          
+            % image conversion job
             job{1}.spm.meeg.images.convert2images.mode = 'scalp x time';
             job{1}.spm.meeg.images.convert2images.channels{1}.type = 'EEG';
             job{1}.spm.meeg.images.convert2images.prefix = details.eeg.firstLevel.sensor.prefixImages;
         end
         
-        
-        
     case 'source'
-        
         % images are always converted...
         D = copy(D, spm_file(fullfile(D), 'prefix', 'abs'));
         chan = D.indchantype('LFP');
@@ -165,7 +154,6 @@ switch type
         job{1}.spm.meeg.images.convert2images.mode = 'time';
         
     case 'tfsource'
-        
         % images are always converted...
         chan = D.indchantype('EEG');
         job{1}.spm.meeg.images.convert2images.mode = 'time x frequency';

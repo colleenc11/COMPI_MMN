@@ -12,6 +12,8 @@ function output = compi_setup_paths()
 %                    University of Zurich and ETH Zurich
 
 
+warning('off','all')
+
 pathProject = fileparts(mfilename('fullpath'));
 
 % remove all other toolboxes
@@ -37,4 +39,6 @@ rmpath(genpath(fullfile(pathProject,'Toolboxes', 'tapas_6.0')));
 rmpath(genpath(fullfile(pathProject,'Toolboxes', 'HGF_3.0')));
 
 rmpath(genpath(fullfile(pathProject,'behav','FirstLevel','hgf','utils','HGF_tutorial')));
+
+warning('on','all')
 

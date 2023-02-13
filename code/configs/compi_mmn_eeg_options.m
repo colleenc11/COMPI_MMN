@@ -22,10 +22,10 @@ function [options] = compi_mmn_eeg_options(options, preprocStrategyValueArray)
 
 options.eeg.pipe.executeStepsPerSubject = {
 %     'cleanup'
-%     'correct_eyeblinks'
+    'correct_eyeblinks'
 %     'create_behav_regressors'
-%     'ignore_reject_trials'
-%     'run_regressor_erp'
+    'ignore_reject_trials'
+    'run_regressor_erp'
     'run_stats_sensor'
     %'compute_beta_wave'
     };
@@ -173,9 +173,9 @@ switch options.eeg.stats.design
     case 'precision'
         options.eeg.stats.regressors = {'pi1', 'pi2', 'pi3'};
     case 'lowPE'
-        options.eeg.stats.regressors = {'delta1', 'pi1'};
+        options.eeg.stats.regressors = {'delta1', 'psi2'};
     case 'highPE'
-        options.eeg.stats.regressors = {'delta2', 'pi2'};
+        options.eeg.stats.regressors = {'delta2', 'psi3'};
 end
 
 options.eeg.stats.pValueMode    = 'clusterFWE';

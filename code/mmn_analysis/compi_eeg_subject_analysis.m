@@ -1,9 +1,11 @@
 function compi_eeg_subject_analysis( id, options )
+% -------------------------------------------------------------------------
 % COMPI_EEG_SUBJECT_ANALYSIS Performs all analysis steps for one subject 
 % of the COMPI study (up until first level modelbased statistics).
 % Adapted from dmpad-toolbox: compi_eeg_analyze_subject.
 %   IN:     id          subject identifier string, e.g. '0101'
 %           options     as set by compi_set_analysis_options();
+% -------------------------------------------------------------------------
 
 fprintf('\n===\n\t The following pipeline Steps per subject were selected. Please double-check:\n\n');
 disp(options.eeg.pipe.executeStepsPerSubject);
@@ -27,13 +29,7 @@ end
 
 % Creates regressors from behavioral model
 if doCreateRegressors
-    doPlotFigure = true;
-    switch options.task.type
-        case 'ioio'
-            compi_create_behav_regressors(id, options, doPlotFigure);
-        case 'mmn'
-            compi_mmn_model(id, options);
-    end
+    compi_mmn_model(id, options);
 end
 
 % Preparation and Pre-processing
@@ -54,11 +50,12 @@ if doRegressorERP
 end
 
 % Image conversion and GLM in sensor space
+% Based on design matrix, include regressors in one or seperate design
 if doRunStatsSensor
     fprintf('Running GLM for %s (Sensor space)', id);
     switch options.eeg.stats.design
-%         case 'epsilon'
-%             compi_stats_adaptable(id, options);
+        case {'lowPE', 'highPE'}
+            compi_stats_adaptable(id, options);
         otherwise
             for i = 1: (numel(options.eeg.stats.regressors)) 
                 factor = {options.eeg.stats.regressors{i}};
