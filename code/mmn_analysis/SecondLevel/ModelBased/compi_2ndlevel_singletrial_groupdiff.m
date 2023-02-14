@@ -66,12 +66,12 @@ catch
         for i_group = 1: numel(options.subjects.group_labels)
 
             switch options.eeg.stats.design
-%                 case 'epsilon'
-%                     for sub = 1: length(options.subjects.IDs{i_group})
-%                         subID = char(options.subjects.IDs{i_group}{sub});
-%                         details = compi_get_subject_details(subID, options);
-%                         imagePaths{sub, i_group} = fullfile(details.eeg.firstLevel.sensor.pathStats, ['beta_000' num2str(i_reg+1) '.nii,1']);
-%                     end
+                case {'lowPE', 'highPE'}
+                    for sub = 1: length(options.subjects.IDs{i_group})
+                        subID = char(options.subjects.IDs{i_group}{sub});
+                        details = compi_get_subject_details(subID, options);
+                        imagePaths{sub, i_group} = fullfile(details.eeg.firstLevel.sensor.pathStats, ['beta_000' num2str(i_reg+1) '.nii,1']);
+                    end
                 otherwise
                     for sub = 1: length(options.subjects.IDs{i_group})
                         subID = char(options.subjects.IDs{i_group}{sub});

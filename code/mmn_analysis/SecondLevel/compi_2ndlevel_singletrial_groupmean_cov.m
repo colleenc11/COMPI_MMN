@@ -1,4 +1,4 @@
-function compi_2ndlevel_singletrial_groupmean_cov( scndlvlroot, imagePaths, regressors, options, covars)
+function compi_2ndlevel_singletrial_groupmean_cov( scndlvlroot, imagePaths, options, covars)
 %COMPI_2NDLEVEL_SINGLETRIAL_GROUPMEAN_COV Computes 1st level statistics for
 %multiple regression of the EEG signal with single-trial (modelbased)
 %regressors, using a one-sample t-test.
@@ -23,20 +23,25 @@ nSubjects = numel(imagePaths);
 spm('defaults', 'EEG');
 spm_jobman('initcfg');
 
+regressors = options.eeg.stats.regressors;
+
 for reg = 1: numel(regressors)
     regressorName = char(regressors{reg});
     
     % open a new folder for each regressor
     factorialDesignDir = fullfile(scndlvlroot, regressorName);
+    if ~exist(factorialDesignDir, 'dir')
+        mkdir(factorialDesignDir);
+    end
     
     % collect the regressor's beta image from each subject
     scans = cell(nSubjects, 1);
 
     switch options.eeg.stats.design
-%         case 'epsilon'
-%             for sub = 1: nSubjects
-%                 scans{sub, 1} = char(fullfile(imagePaths{sub}, ['beta_000' num2str(reg+1) '.nii,1']));
-%             end
+        case {'lowPE', 'highPE'}
+            for sub = 1: nSubjects
+                scans{sub, 1} = char(fullfile(imagePaths{sub}, ['beta_000' num2str(reg+1) '.nii,1']));
+            end
         otherwise
             for sub = 1: nSubjects
                 scans{sub, 1} = char(fullfile(imagePaths{sub}, regressorName, ['beta_0002.nii,1']));

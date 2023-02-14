@@ -53,14 +53,13 @@ end
 % Based on design matrix, include regressors in one or seperate design
 if doRunStatsSensor
     fprintf('Running GLM for %s (Sensor space)', id);
-    switch options.eeg.stats.design
-        case {'lowPE', 'highPE'}
-            compi_stats_adaptable(id, options);
-        otherwise
-            for i = 1: (numel(options.eeg.stats.regressors)) 
-                factor = {options.eeg.stats.regressors{i}};
-                compi_stats_adaptable_single_reg(id, factor, options);
-            end
+    if options.eeg.stats.regDesignSplit
+        for i = 1: (numel(options.eeg.stats.regressors)) 
+            factor = {options.eeg.stats.regressors{i}};
+            compi_stats_adaptable_single_reg(id, factor, options);
+        end
+    else
+        compi_stats_adaptable(id, options);
     end
 end
 

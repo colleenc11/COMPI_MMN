@@ -22,10 +22,10 @@ function [options] = compi_mmn_eeg_options(options, preprocStrategyValueArray)
 
 options.eeg.pipe.executeStepsPerSubject = {
 %     'cleanup'
-    'correct_eyeblinks'
+%     'correct_eyeblinks'
 %     'create_behav_regressors'
-    'ignore_reject_trials'
-    'run_regressor_erp'
+%     'ignore_reject_trials'
+%     'run_regressor_erp'
     'run_stats_sensor'
     %'compute_beta_wave'
     };
@@ -113,7 +113,7 @@ options.eeg.preproc.keepotherchannels       = 1; % for montage
 %% -- erp ------------------------------------------------------------------%
 
 options.eeg.erp.type        = 'oddball'; % delta, epsilon, roving, oddball_phases,
-options.eeg.erp.covars        = 1; % include covariates? 1 = yes, 0 = no
+options.eeg.erp.covars        = 0; % include covariates? 1 = yes, 0 = no
 % phases_roving, split_phases
 switch options.eeg.erp.type
     case 'oddball' 
@@ -158,24 +158,29 @@ options.eeg.conversion.overwrite        = 1;
 
 %-- stats ----------------------------------------------------------------%
 options.eeg.stats.mode          = 'modelbased';         % 'modelbased', 'ERP'
-options.eeg.stats.covars        = 1;                    % include covariates? 1 = yes, 0 = no
+options.eeg.stats.covars        = 0;                    % include covariates? 1 = yes, 0 = no
 options.eeg.stats.firstLevelAnalysisWindow = [100 450];
 options.eeg.stats.priors        = 'volTrace';           % omega35, default, mypriors,
 % kappa2, peIncrease, volTrace
-options.eeg.stats.design        = 'epsilon';            % delta, epsilon, precision
+options.eeg.stats.design        = 'lowPE';            % delta, epsilon, precision
 options.eeg.stats.designPruned  = true;                 % if true, rejected trials are removed from conversion and design matrix
 
 switch options.eeg.stats.design
     case 'epsilon'
         options.eeg.stats.regressors = {'epsilon2', 'epsilon3'};
+        options.eeg.stats.regDesignSplit = 1;
     case 'delta'
         options.eeg.stats.regressors = {'delta1', 'delta2'};
+        options.eeg.stats.regDesignSplit = 1;
     case 'precision'
         options.eeg.stats.regressors = {'pi1', 'pi2', 'pi3'};
+        options.eeg.stats.regDesignSplit = 1;
     case 'lowPE'
         options.eeg.stats.regressors = {'delta1', 'psi2'};
+        options.eeg.stats.regDesignSplit = 0;
     case 'highPE'
         options.eeg.stats.regressors = {'delta2', 'psi3'};
+        options.eeg.stats.regDesignSplit = 0;
 end
 
 options.eeg.stats.pValueMode    = 'clusterFWE';
