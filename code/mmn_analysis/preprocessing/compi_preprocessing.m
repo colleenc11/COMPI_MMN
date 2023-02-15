@@ -259,6 +259,9 @@ catch
                 delete(fullfile(S.D.path, S.D.inv{1}.gainmat));
                 delete(S.D);
             end
+
+            hmJob{1}.spm.meeg.source.headmodel.D = {fullfile(D)};
+            spm_jobman('run', hmJob);
             
     end
 

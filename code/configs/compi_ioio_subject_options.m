@@ -41,30 +41,39 @@ switch options.analysis.type
         missing = {};
                     
     case 'matched'
-        missing = {'0055'}; % dropped out
-
-        % Exclude subjects that were not selected to match CHR
-%         missing = setdiff(HC,{
-%             '0101', '0103','0107','0113','0115','0116','0117','0120',...
-%             '0122','0123','0129','0130','0131','0134',...
-%             '0135', '0139', '0142', '0143'})'; %'0126','0136'
-%         missing{end+1} = '0055'; % dropped out
+        % Exclude subjects that were NOT selected to match CHR
+        missing = setdiff(HC,{
+            '0101', '0102', '0104', '0106', '0107', '0108', '0109',...
+            '0113', '0115', '0117', '0118', '0123', '0124', '0129',...
+            '0131', '0134', '0137', '0141'})';
+        
+        missing{end+1} = '0055'; % dropped out
 end
 
 switch lower(options.analysis.type)
     case 'all'
         options.subjects.all = setdiff([HC CHR], missing, 'stable');
+
+        % Output groups
+        options.subjects.group_labels = {'HC','CHR'};
+        options.subjects.IDs{1} = setdiff(HC, missing , 'stable');
+        options.subjects.IDs{2} = setdiff(CHR, missing, 'stable');
+
     case 'matched'
         options.subjects.all = setdiff([HC CHR], missing, 'stable');
+
+        % Output groups
+        options.subjects.group_labels = {'HC','CHR'};
+        options.subjects.IDs{1} = setdiff(HC, missing , 'stable');
+        options.subjects.IDs{2} = setdiff(CHR, missing, 'stable');
+
     case 'hc'
         options.subjects.all = setdiff(HC, missing , 'stable');
+
+        % Output groups
+        options.subjects.group_labels = {'HC'};
+        options.subjects.IDs{1} = setdiff(HC, missing , 'stable');
 end
 
-
-%% Output groups (just in case)
-
-options.subjects.group_labels = {'HC','CHR'};
-options.subjects.IDs{1} = setdiff(HC, missing , 'stable');
-options.subjects.IDs{2} = setdiff(CHR, missing, 'stable');
 
 end

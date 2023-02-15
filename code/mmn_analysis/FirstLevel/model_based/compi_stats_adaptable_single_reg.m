@@ -34,7 +34,7 @@ switch lower(type)
         fileToLoad = details.eeg.source.filename;
         stringRerunFunction = 'dmpad_source';
         pathImages  = details.eeg.firstLevel.source.pathImages;
-        pathStats  = details.eeg.firstLevel.source.pathStats;
+        pathStats  = fullfile(details.eeg.firstLevel.sensor.pathStats, factors{1});
         pfxImages = details.eeg.firstLevel.source.prefixImages;
         switch options.eeg.preproc.smoothing
             case 'yes'

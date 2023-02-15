@@ -80,9 +80,7 @@ else
 end
 
 design = getfield(load(fileDesignMatrix), 'design');
-
 factors = options.eeg.stats.regressors;
-
 
 %% Set up GLM design and estimate job
 % Preparation

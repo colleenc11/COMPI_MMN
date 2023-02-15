@@ -60,11 +60,11 @@ job{3}.spm.stats.con.consess{3}.fcon.sessrep = 'none';
 
 for i_cov = 1:width(covars)
     i_con = (3 + i_cov); % contrast number
-    job{3}.spm.stats.con.consess{i_con}.tcon.name = ['Effect of ' covars.Properties.VariableNames{i_cov} ' neg'];
+    job{3}.spm.stats.con.consess{i_con}.tcon.name = ['Neg effect of ' covars.Properties.VariableNames{i_cov} ' neg'];
     job{3}.spm.stats.con.consess{i_con}.tcon.weights = [(zeros(1, i_cov)) -1];
     job{3}.spm.stats.con.consess{i_con}.tcon.sessrep = 'none';
         
-    job{3}.spm.stats.con.consess{i_con+1}.tcon.name = ['Effect of ' covars.Properties.VariableNames{i_cov} ' pos'];
+    job{3}.spm.stats.con.consess{i_con+1}.tcon.name = ['Pos effect of ' covars.Properties.VariableNames{i_cov} ' pos'];
     job{3}.spm.stats.con.consess{i_con+1}.tcon.weights = [(zeros(1, i_cov)) 1];
     job{3}.spm.stats.con.consess{i_con+1}.tcon.sessrep = 'none';
 end

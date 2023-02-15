@@ -36,41 +36,7 @@ options.task.modality = 'eeg';
 % Result folder roots
 options = compi_setup_roots(preprocStrategyValueArray, options);
 
-%% Task-specific options
-% switch task
-%     case 'ioio'
-%         % Specify task options
-%         options = compi_ioio_task_options(options);
-% end
-% 
-% % Specify behavioral options
-% options = compi_ioio_behav_options(options);
-
-% Specify HGF options
-% switch modality
-%     case 'hgf_comp'
-%         model_space = 9;
-%     case 'phase'
-%         model_space = 9;
-%     otherwise
-%         model_space = 9;
-% end
-% options = compi_ioio_hgf_options(options, model_space);
-
-
-%% Specify EEG options
-% switch options.task.modality
-%     case 'eeg'
-%         switch task
-%             case 'ioio'
-%                 options = compi_ioio_eeg_options(options, ...
-%                     preprocStrategyValueArray, firstLevelDesignName);
-%             case 'mmn'
-%                 options = compi_mmn_eeg_options(options, ...
-%                     preprocStrategyValueArray);
-%         end
-% end
-
+%% MMN specific options
 options = compi_mmn_eeg_options(options, preprocStrategyValueArray);
 
 %% Get subjects

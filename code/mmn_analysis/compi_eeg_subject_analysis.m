@@ -68,7 +68,7 @@ if doRunSources
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Extracting source waveforms for %s', id);
-    dmpad_source(id, options, options.eeg.source.doVisualize)
+    compi_source(id, options, options.eeg.source.doVisualize)
     options.eeg.type = tmpType;
 end
 
@@ -77,8 +77,17 @@ if doRunStatsSource
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Running GLM for %s (Source space)', id);
-    dmpad_stats_adaptable(id, options);
+    options.eeg.stats.firstLevelAnalysisWindow = [0 449];
+    if options.eeg.stats.regDesignSplit
+        for i = 1: (numel(options.eeg.stats.regressors)) 
+            factor = {options.eeg.stats.regressors{i}};
+            compi_stats_adaptable_single_reg(id, factor, options);
+        end
+    else
+        compi_stats_adaptable(id, options);
+    end
     options.eeg.type = tmpType;
+    options.eeg.stats.firstLevelAnalysisWindow = [0 450];
 end
 
 % Compute Beta Waveform

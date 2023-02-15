@@ -22,17 +22,14 @@ function [options] = compi_mmn_eeg_options(options, preprocStrategyValueArray)
 
 options.eeg.pipe.executeStepsPerSubject = {
 %     'cleanup'
-%     'correct_eyeblinks'
+    'correct_eyeblinks'
 %     'create_behav_regressors'
 %     'ignore_reject_trials'
 %     'run_regressor_erp'
-    'run_stats_sensor'
-    %'compute_beta_wave'
+%     'run_stats_sensor'
+    'extract_sources'
+    'run_stats_source'
     };
-
-% Other options not executed yet are:
-%     'extract_sources'
-%     'run_stats_source'
 
 
 %% EEG Analysis Options IOIO
@@ -158,11 +155,11 @@ options.eeg.conversion.overwrite        = 1;
 
 %-- stats ----------------------------------------------------------------%
 options.eeg.stats.mode          = 'modelbased';         % 'modelbased', 'ERP'
-options.eeg.stats.covars        = 0;                    % include covariates? 1 = yes, 0 = no
+options.eeg.stats.covars        = 1;                    % include covariates? 1 = yes, 0 = no
 options.eeg.stats.firstLevelAnalysisWindow = [100 450];
 options.eeg.stats.priors        = 'volTrace';           % omega35, default, mypriors,
 % kappa2, peIncrease, volTrace
-options.eeg.stats.design        = 'lowPE';            % delta, epsilon, precision
+options.eeg.stats.design        = 'epsilon';            % delta, epsilon, precision
 options.eeg.stats.designPruned  = true;                 % if true, rejected trials are removed from conversion and design matrix
 
 switch options.eeg.stats.design
@@ -186,3 +183,14 @@ end
 options.eeg.stats.pValueMode    = 'clusterFWE';
 options.eeg.stats.exampleID     = '0001';
 options.eeg.stats.overwrite     = 1;
+
+%% EEG Source Analysis--------------------------------------------------------%
+options.eeg.source.mmnVOI         = fullfile(options.roots.config, 'compi_voi_msp_mmn.mat');
+options.eeg.source.radius         = 16;
+options.eeg.source.msp            = true;
+options.eeg.source.priors         = fullfile(options.roots.config, 'priors.mat');
+options.eeg.source.priorsmask     = {''};
+options.eeg.source.doVisualize    = false;
+options.eeg.source.secondlevelDir = ...
+    fullfile(options.roots.analysis, 'results_source');
+options.eeg.source.type           = 'source';
