@@ -8,7 +8,7 @@
 compi_setup_paths();
 
 %% Set options
-options = compi_mmn_options([3 1 1 2 2 3 2 2 2 2], 'PEs');
+options = compi_mmn_options([3 1 1 2 2 3 2 2 2 2]);
 
 % PREPROC ARRAY OPTIONS
 % badTrialsThreshold              = {'80', '100', '75'};

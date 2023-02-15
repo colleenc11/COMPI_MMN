@@ -1,16 +1,13 @@
-function options = compi_mmn_options(preprocStrategyValueArray, firstLevelDesignName)
+function options = compi_mmn_options(preprocStrategyValueArray)
 %--------------------------------------------------------------------------
-% Function decription goes here.
-%
+% Options for COMPI MMN study (directory roots, analysis, subejcts)
+% IN
+%       preprocStrategyValueArray     preprocessing analysis options
 %--------------------------------------------------------------------------
 
 %% Defaults
 if nargin < 1
     preprocStrategyValueArray = [2 1 4 2 1 1 1 1 2];
-end
-
-if nargin < 2
-    firstLevelDesignName = 'Default';
 end
 
 %% Set user roots
@@ -29,11 +26,17 @@ options.roots.toolboxes = fullfile(options.roots.code ,'Toolboxes');
 
 %% Set options
 
-options.analysis.type = 'all'; % 'hc', 'matched', 'all'
-options.task.modality = 'eeg';  
+options.analysis.type       = 'matched';    % Type of group analysis (hc, matched, all)
+
+% 2nd-level analysis
+options.eeg.type            = 'source';     % Type of 2nd-level analysis (sensor, source)
+options.eeg.covars          = 1;            % Include covariates in analysis (1 = yes, 0 = no)
+
+% 2nd-level design
+options.eeg.stats.design    = 'epsilon';    % epsilon, lowPE, highPE
+options.eeg.erp.type        = 'oddball';    % epsilon, oddball, oddball_phases
 
 %% Set up task-specific roots
-% Result folder roots
 options = compi_setup_roots(preprocStrategyValueArray, options);
 
 %% MMN specific options

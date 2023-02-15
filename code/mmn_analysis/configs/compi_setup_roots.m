@@ -1,4 +1,12 @@
 function options = compi_setup_roots(preprocStrategyValueArray, options)
+%--------------------------------------------------------------------------
+% COMPI_SETUP_ROOTS Create folder roots for analysis. 
+% IN
+%       preprocStrategyValueArray   preprocessing analysis options
+%       options                     (subject-independent) analysis pipeline 
+%                                   options, retrieve via options = 
+%                                   compi_set_analysis_options
+%--------------------------------------------------------------------------
 
 % Main results folder
 options.roots.results = fullfile(options.roots.project,'results',...

@@ -191,7 +191,7 @@ catch
                 case 'pssp'
                     % Remove wrong eyeblink trials before computing confound
                     % components
-                    if isfield(options.eeg.preproc.artifact, 'lowPassFilter')
+                    if options.eeg.preproc.artifact.applylowPass
                         filterOptions.eeg.preproc.lowpassfreq = options.eeg.preproc.artifact.lowPassFilter;
                         filterOptions.eeg.preproc.keep = 1;
                         DaF = tnueeg_filter(Da, 'low', filterOptions);
