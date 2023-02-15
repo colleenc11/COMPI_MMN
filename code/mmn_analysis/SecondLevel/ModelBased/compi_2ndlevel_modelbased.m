@@ -11,9 +11,21 @@ end
 % loop over groups
 for i_group = 1:length(options.subjects.group_labels)
     options.condition = char(options.subjects.group_labels{i_group});
-    compi_2ndlevel_singletrial_percondition(options);
+
+    switch options.eeg.type
+        case 'sensor'
+            compi_2ndlevel_singletrial_percondition(options);
+        case 'source'
+            compi_2ndlevel_singletrial_source(options);
+    end
 end
 
-compi_2ndlevel_singletrial_groupdiff(options);
+% compute group difference
+switch options.eeg.type
+    case 'sensor'
+        compi_2ndlevel_singletrial_groupdiff(options);
+    case 'source'
+        compi_2ndlevel_singletrial_source_groupdiff(options);
+end
 
 end
