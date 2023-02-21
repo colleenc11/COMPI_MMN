@@ -45,14 +45,14 @@ catch
     
     for i_reg = 1:numel(options.eeg.stats.regressors)
 
-        for i_source = 5: size(VOI, 1)
+        for i_source = 1: size(VOI, 1)
             label = VOI{i_source, 1};
 
             disp(['Computing group difference stats for regressors in the ' ...
                 options.eeg.stats.design  ' design...']);
             
              % open a new results folder for each regressor and source
-            scndlvlroot = fullfile(options.roots.results_source, 'group_diff', ...
+            scndlvlroot = fullfile(options.roots.results_source, 'groupdiff', ...
                 options.eeg.stats.regressors{i_reg}, label);
             if ~exist(scndlvlroot, 'dir')
                 mkdir(scndlvlroot);
@@ -75,7 +75,7 @@ catch
                             subID = char(options.subjects.IDs{i_group}{sub});
                             details = compi_get_subject_details(subID, options);
                             imagePaths{sub, i_group} = fullfile(details.eeg.firstLevel.source.pathStats, ...
-                                ['beta_000' num2str(i_reg+1) '.nii,1']);
+                                options.eeg.stats.design, label, ['beta_000' num2str(i_reg+1) '.nii,1']);
                         end
                     otherwise
                         for sub = 1: length(options.subjects.IDs{i_group})
@@ -88,7 +88,7 @@ catch
             end
         
             % get covaiates for both groups
-            if options.eeg.stats.covars
+            if options.eeg.covars
                 covars = compi_get_covariates(options, options.subjects.all);
             else
                 covars = {};

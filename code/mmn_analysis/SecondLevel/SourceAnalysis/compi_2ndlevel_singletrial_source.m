@@ -55,7 +55,7 @@ catch
             end
 
             % get group covariate information
-            if options.eeg.stats.covars
+            if options.eeg.covars
                 covars = compi_get_covariates(options, options.subjects.IDs{i_group});
             else
                 covars = {};

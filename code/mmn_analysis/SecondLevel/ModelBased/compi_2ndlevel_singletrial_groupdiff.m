@@ -49,7 +49,7 @@ catch
             options.eeg.stats.design  ' design...']);
         
         % make sure we have a results directory
-        scndlvlroot = fullfile(options.roots.results_hgf, 'group_diff', options.eeg.stats.regressors{i_reg});
+        scndlvlroot = fullfile(options.roots.results_hgf, 'groupdiff', options.eeg.stats.regressors{i_reg});
         if ~exist(scndlvlroot, 'dir')
             mkdir(scndlvlroot);
         end
@@ -82,7 +82,7 @@ catch
         end
     
         % get covaiates for both groups
-        if options.eeg.stats.covars
+        if options.eeg.covars
             covars = compi_get_covariates(options, options.subjects.all);
         else
             covars = {};

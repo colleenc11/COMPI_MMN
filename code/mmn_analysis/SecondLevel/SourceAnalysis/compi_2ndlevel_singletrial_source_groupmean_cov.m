@@ -46,7 +46,7 @@ for reg = 1: numel(regressors)
         switch options.eeg.stats.design
             case {'lowPE', 'highPE'}
                 for sub = 1: nSubjects
-                    scans{sub, 1} = char(fullfile(imagePaths{sub}, ['beta_000' num2str(reg+1) '.nii,1']));
+                    scans{sub, 1} = char(fullfile(imagePaths{sub}, options.eeg.stats.design, label, ['beta_000' num2str(reg+1) '.nii,1']));
                 end
             otherwise
                 for sub = 1: nSubjects
