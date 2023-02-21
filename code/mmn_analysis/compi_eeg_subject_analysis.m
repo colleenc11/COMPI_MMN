@@ -77,7 +77,7 @@ if doRunStatsSource
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Running GLM for %s (Source space)', id);
-    options.eeg.stats.firstLevelAnalysisWindow = [0 449];
+    options.eeg.stats.firstLevelAnalysisWindow = [100 449];
     if options.eeg.stats.regDesignSplit
         for i = 1: (numel(options.eeg.stats.regressors)) 
             factor = {options.eeg.stats.regressors{i}};
@@ -87,7 +87,7 @@ if doRunStatsSource
         compi_stats_adaptable(id, options);
     end
     options.eeg.type = tmpType;
-    options.eeg.stats.firstLevelAnalysisWindow = [0 450];
+    options.eeg.stats.firstLevelAnalysisWindow = [100 450];
 end
 
 % Compute Beta Waveform
