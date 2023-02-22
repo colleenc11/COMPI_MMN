@@ -44,6 +44,7 @@ options.eeg.source.doVisualize    = false;
 options.eeg.source.type           = 'source';
 
 options.eeg.source.exampleLabel   = 'MSP_leftA1';
-options.eeg.source.overwrite       = 1;
+options.eeg.source.labels         = {'MSP_leftA1', 'MSP_rightA1', 'MSP_leftSTG', 'MSP_rightSTG', 'MSP_leftIFG', 'MSP_rightIFG'};
+options.eeg.source.overwrite      = 1;
 
 end

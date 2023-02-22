@@ -1,27 +1,32 @@
 function [erpWave] = compi_get_sourcewaveforms_all_subjects(options, sourceArray)
-% retrieves ERP waves of specific source for all trials 
+%--------------------------------------------------------------------------
+% COMPI_GET_SOURCE_WAVEFORMS_ALL_SUBJECTS Retrieves ERP waves for all 
+% sources and all trials 
 %
-% IN
-%   [erpWave] = dmpad_get_sourcewaveforms_all_subjects(options, ...
-%                  sourceArray, iContrastArray)
-% OUT
-%   erpWave         cell(nSubjects, nContrasts) erp waveforms of specific
-%                   channel for all subjects and specified contrasts
+%   IN:     options       as set by compi_set_analysis_options();
+%           sourceArray   array of sources
 %
+%   OUT:     erpWave      cell(nSubjects, nContrasts) erp waveforms of all
+%                         sources and specified subjects
+%
+% See also dmpad_get_sourcewaveforms_all_subjects 
+%--------------------------------------------------------------------------
 
-nSubjects = numel(options.subjects.all);
-nContrasts = numel(sourceArray);
-erpWave{nSubjects,nContrasts} = [];
-
-for iSubject = 1:nSubjects
-    id = char(options.subjects.all(iSubject));
-    details = compi_get_subject_details(id, options);
-    data = spm_eeg_load([details.eeg.source.savefilename]);
-    T = data.fttimelock;
-    for iContrast = 1:nContrasts
-        chan = sourceArray{iContrast};
-        sources =str2num(chan);
-        erpWave{iSubject, iContrast} = squeeze(T.trial(:,sources,:));
-
+for i_group = 1: numel(options.subjects.group_labels)
+    if strcmp(options.subjects.group_labels{i_group}, options.condition)
+        
+        nSubjects = numel(options.subjects.IDs{i_group});
+        nContrasts = numel(sourceArray);
+        erpWave{nSubjects,nContrasts} = [];
+        
+        for iSubject = 1:nSubjects
+            id = char(options.subjects.IDs{i_group}(iSubject));
+            details = compi_get_subject_details(id, options);
+            data = spm_eeg_load([details.eeg.source.savefilename]);
+            T = data.fttimelock;
+            for iContrast = 1:nContrasts
+                erpWave{iSubject, iContrast} = squeeze(T.trial(:,iContrast,:));
+            end
+        end
     end
 end

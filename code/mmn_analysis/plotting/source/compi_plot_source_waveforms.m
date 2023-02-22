@@ -6,11 +6,17 @@ function compi_plot_source_waveforms (options)
 %   OUT:    --
 %--------------------------------------------------------------------------
 
-
 for i_group = 1:length(options.subjects.group_labels)
     options.condition = char(options.subjects.group_labels{i_group});
     
-    fh = compi_plot_source_waveforms_as_subplots(options);
+    compi_plot_source_waveforms_as_subplots(options);
+    
+    for iReg = 1:length(options.eeg.stats.regressors)
+        regressor = char(options.eeg.stats.regressors{iReg});
+        
+        % extract first and last significant voxel based on source stats
+        compi_first_last_significant_time_significance(options, regressor);
+    end
 
 end
 
