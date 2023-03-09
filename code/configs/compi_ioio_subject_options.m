@@ -19,23 +19,22 @@ HC = {...
     '0140','0141','0142','0143'...
     };
 
-% options.subjects.eeg_1st = {...
-%     '0001','0002','0003','0004','0005','0006','0007','0008','0009',...
-%     '0010','0011','0012','0013','0014','0015','0016','0017','0018',...
-%     '0052','0053','0056',...
-%     '0061','0062','0064','0065','0068','0069','0070',...
-%     '0101','0102','0103','0106','0107','0108','0109',...
-%     '0111','0114','0115','0116','0118','0119',...
-%     '0120','0122','0123','0125','0128',...
-%     '0130','0131','0132','0133','0134','0135','0137',...
-%     '0141',...
-%     };
+% total = 17+
+HC_GFTotal_High = {'0101','0102','0103','0105','0107','0108','0109','0110','0111','0112',...
+                    '0114','0115','0116','0117','0120','0121','0123','0124','0125','0126',...
+                    '0127','0128','0129','0131','0133','0134','0135','0136','0138','0139',...
+    };
+% total = <=16
+HC_GFTotal_Low = {'0104','106','0113','0118','0119','0122','0130','0132','0137','0140','0141','0142','0143'...
+    };
+
 
 %% Set missing subjects
 
-switch options.analysis.type
+switch lower(options.analysis.type)
     case 'all'
-        missing = {'0055'}; % dropped out
+        missing = {'0055', ... % dropped out
+                    '0063', '0067'}; %noisy
 
     case 'hc'
         missing = {};
@@ -45,9 +44,14 @@ switch options.analysis.type
         missing = setdiff(HC,{
             '0101', '0102', '0104', '0106', '0107', '0108', '0109',...
             '0113', '0115', '0117', '0118', '0123', '0124', '0129',...
-            '0131', '0134', '0137', '0141'})';
+            '0131', '0137'})'; %'0134', '0141' - remove to match 16 CHR
         
         missing{end+1} = '0055'; % dropped out
+        missing{end+1} = '0063'; % noisy
+        missing{end+1} = '0067'; % noisy
+
+    case 'hc_gftotal'
+        missing = {};
 end
 
 switch lower(options.analysis.type)
@@ -73,6 +77,14 @@ switch lower(options.analysis.type)
         % Output groups
         options.subjects.group_labels = {'HC'};
         options.subjects.IDs{1} = setdiff(HC, missing , 'stable');
+    
+    case 'hc_gftotal'
+        options.subjects.all = setdiff([HC_GFTotal_High HC_GFTotal_Low], missing, 'stable');
+
+        % Output groups
+        options.subjects.group_labels = {'HC_GFTotal_High','HC_GFTotal_Low'};
+        options.subjects.IDs{1} = setdiff(HC_GFTotal_High, missing , 'stable');
+        options.subjects.IDs{2} = setdiff(HC_GFTotal_Low, missing, 'stable');
 end
 
 

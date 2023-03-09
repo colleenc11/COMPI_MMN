@@ -189,6 +189,7 @@ details.eeg.firstLevel.sensor.pathStats  = fullfile(details.eeg.subjectroot.resu
 details.eeg.firstLevel.source.pathImages = details.eeg.conversion.source.convRoot;
 details.eeg.firstLevel.source.pathStats  = fullfile(details.eeg.subjectroot.results, 'stats', 'source');
 details.eeg.firstLevel.source.prefixImages = 'source_';
+
 details.eeg.firstLevel.tf.pathImages     = details.eeg.conversion.tf.convRoot;
 details.eeg.firstLevel.tf.pathStats      = fullfile(details.eeg.subjectroot.results, 'stats', 'tfsource');
 details.eeg.firstLevel.tf.prefixImages   = 'tfsource_';
@@ -206,6 +207,10 @@ switch options.eeg.preproc.smoothing
 end
 
 %% ERP analysis file names
+% details.eeg.erp.source.pathImages = fullfile(details.eeg.erp.root, 'oddball', ['diff_oddball.dat.mat']);
+% details.eeg.erp.source.prefixImages = 'source_';
+
+
 details.eeg.erp.root          = fullfile(details.eeg.subjectroot.results, 'erp');
 details.eeg.erp.type          = '2bins';
 details.eeg.erp.conditions    = {'Percentile0to50', 'Percentile50to100'};
@@ -221,9 +226,11 @@ end
 details.eeg.erp.contrastWeighting   = 1;
 details.eeg.erp.contrastPrefix      = 'diff_';
 details.eeg.erp.contrastName        = 'mmn';
-details.eeg.erp.difffile            = fullfile(details.eeg.erp.root, ['diffwave' details.eeg.prepfilename  '.mat']);
-details.eeg.erp.sourcefile          = fullfile(details.eeg.preproot, ['B' id '_binned_outcomes.mat']);
+details.eeg.erp.difffile            = fullfile(details.eeg.erp.root, 'oddball', ['diff_oddball.mat']);
+details.eeg.erp.sourcefile          = fullfile(details.eeg.erp.root, 'oddball', ['B' id '_binned_outcomes.mat']);
 details.eeg.erp.erpfigs             = fullfile(details.eeg.erp.root, 'Figures');
+
+details.eeg.erp.source.pathStats  = fullfile(details.eeg.erp.root, 'source');
 
 %% EEG Quality Control
 details.eeg.quality.root = fullfile(details.eeg.subjectroot.results, 'quality');

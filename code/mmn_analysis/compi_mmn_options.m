@@ -29,12 +29,12 @@ options.roots.toolboxes = fullfile(options.roots.code ,'Toolboxes');
 options.analysis.type       = 'matched';    % Type of group analysis (hc, matched, all)
 
 % 2nd-level analysis
-options.eeg.type            = 'source';     % Type of 2nd-level analysis (sensor, source)
+options.eeg.type            = 'sensor';     % Type of 2nd-level analysis (sensor, source)
 options.eeg.covars          = 1;            % Include covariates in analysis (1 = yes, 0 = no)
 
 % 2nd-level design
-options.eeg.stats.design    = 'epsilon';    % epsilon, lowPE, highPE
-options.eeg.erp.type        = 'oddball';    % epsilon, oddball, oddball_phases
+options.eeg.stats.design    = 'epsilons';          % epsilon, epsilons, lowPE, highPE
+options.eeg.erp.type        = 'oddball_phases';    % epsilon, oddball, oddball_phases
 
 %% Set up task-specific roots
 options = compi_setup_roots(preprocStrategyValueArray, options);
