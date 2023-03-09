@@ -66,7 +66,7 @@ catch
         for i_group = 1: numel(options.subjects.group_labels)
 
             switch options.eeg.stats.design
-                case {'lowPE', 'highPE'}
+                case {'lowPE', 'highPE', 'epsilons'}
                     for sub = 1: length(options.subjects.IDs{i_group})
                         subID = char(options.subjects.IDs{i_group}{sub});
                         details = compi_get_subject_details(subID, options);
