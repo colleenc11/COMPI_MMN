@@ -33,6 +33,8 @@ switch flag
 
         condNames = options.subjects.group_labels;
         lineColors = [cols.darkgray; cols.lightred; cols.blue];
+%         condNames = {'HC_Role_High', 'HC_Role_Low', 'CHR_Role_High', 'CHR_Role_Low'};
+%         lineColors = [cols.darkred; cols.magenta; cols.blue; cols.cyan];
 
         lineWidth = 2;
 

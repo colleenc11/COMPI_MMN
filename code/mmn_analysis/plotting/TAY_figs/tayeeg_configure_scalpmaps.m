@@ -33,7 +33,7 @@ else
 end
 
 % choose on subject ID for plotting electrode locations
-id = '0103';
+id = '0101';
 details =  compi_get_subject_details(id, options);
 % determine the preprocessed file to use for conversion
 prepfile = details.eeg.prepfile;
