@@ -43,11 +43,28 @@ if doIgnoreRejectTrials
     compi_ignore_reject_trials(id, options);
 end
 
+%% ------------------------------------------------------------------------
+% ERP BASED ANALYSIS
+% -------------------------------------------------------------------------
+
 % Compute ERPs for model regressors (e.g. epsilons)
 if doRegressorERP
     fprintf('Running regressor ERP analysis for %s', id);
     compi_erp(id, options);
 end
+
+% Extract sources based on MIP or fMRI priors for oddball waveform
+if doRunERPSources
+    tmpType = options.eeg.type;
+    options.eeg.type = 'source';
+    fprintf('Extracting source waveforms for %s', id);
+    compi_source_erp(id, options, options.eeg.source.doVisualize)
+    options.eeg.type = tmpType;
+end
+
+%% ------------------------------------------------------------------------
+% MODEL BASED ANALYSIS
+% -------------------------------------------------------------------------
 
 % Image conversion and GLM in sensor space
 % Based on design matrix, include regressors in one or seperate design
@@ -77,7 +94,6 @@ if doRunStatsSource
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Running GLM for %s (Source space)', id);
-    options.eeg.stats.firstLevelAnalysisWindow = [100 449];
     if options.eeg.stats.regDesignSplit
         for i = 1: (numel(options.eeg.stats.regressors)) 
             factor = {options.eeg.stats.regressors{i}};
