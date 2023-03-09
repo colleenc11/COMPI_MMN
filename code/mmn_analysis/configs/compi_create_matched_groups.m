@@ -5,9 +5,9 @@ function compi_create_matched_groups(options)
 
 %% Create random numbers
 rng(1)
-randNumbers = randi([1, 42], 1, 18);
+randNumbers = randi([1, 42], 1, 16);
 randNumbers = unique(randNumbers);
-while length(randNumbers) < 18
+while length(randNumbers) < 16
     newNumber = randi([1, 42]);
     if ~ismember(newNumber, randNumbers)
         randNumbers = [randNumbers, newNumber];
@@ -54,13 +54,13 @@ covars = array2table([age wm ed_yrs gender handedness cannabis]);
 covars.Properties.VariableNames = {'age', 'wm', 'ed_yrs', 'gender', 'handedness', 'cannabis'};
 
 %% Test for statistical differences
-[h_age,~]       = ttest2(covars.age(1:18), covars.age(19:end));
-[h_wm,~]        = ttest2(covars.wm(1:18), covars.wm(19:end));
-[h_ed_yrs,~]    = ttest2(covars.ed_yrs(1:18), covars.ed_yrs(19:end));
+[h_age,~]       = ttest2(covars.age(1:16), covars.age(17:end));
+[h_wm,~]        = ttest2(covars.wm(1:16), covars.wm(17:end));
+[h_ed_yrs,~]    = ttest2(covars.ed_yrs(1:16), covars.ed_yrs(17:end));
 
-[h_gender,~]            = ttest2(covars.gender(1:18), covars.gender(19:end));
-[h_handedness,~]        = ttest2(covars.handedness(1:18), covars.handedness(19:end));
-[h_cannabis,~]          = ttest2(covars.cannabis(1:18), covars.cannabis(19:end));
+[h_gender,~]            = ttest2(covars.gender(1:16), covars.gender(17:end));
+[h_handedness,~]        = ttest2(covars.handedness(1:16), covars.handedness(17:end));
+[h_cannabis,~]          = ttest2(covars.cannabis(1:16), covars.cannabis(17:end));
 
 %% Save matched IDs
 
