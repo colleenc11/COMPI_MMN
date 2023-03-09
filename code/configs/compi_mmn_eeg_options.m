@@ -10,7 +10,7 @@ function [options] = compi_mmn_eeg_options(options, preprocStrategyValueArray)
 
 %% Single-subject analysis pipeline
 
-compi_mmn_analysis_pipeline(options);
+options = compi_mmn_analysis_pipeline(options);
 
 %% Preprocessing
 
