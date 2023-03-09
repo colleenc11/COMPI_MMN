@@ -1,6 +1,7 @@
 function D = compi_source_erp(id, options, doVisualize)
 % -------------------------------------------------------------------------
-% COMPI_SOURCE_ERP Extracts sources based on fMRI priors or MSP.
+% COMPI_SOURCE_ERP Create headmodel and extracts sources based on fMRI 
+% priors or MSP.
 % Adapted from dmpad-toolbox: dmpad_source.
 %
 % IN
@@ -13,7 +14,6 @@ function D = compi_source_erp(id, options, doVisualize)
 % OUT
 %   D           Data structure of SPM EEG Analysis
 % -------------------------------------------------------------------------
-
 
 % paths and files
 details = compi_get_subject_details(id, options);
@@ -39,14 +39,14 @@ catch
     D = dmpad_preprocessing(id);
 end
 
-%-- headmodel ------------------------------------------------%
+%-- headmodel ------------------------------------------------------------%
 fid = details.eeg.fid;
 hmJob = dmpad_headmodel_job(D, fid, details, options);
 spm_jobman('run', hmJob);
 D = reload(D);
 
 
-%-- source analysis ------------------------------------------------%
+%-- source analysis ------------------------------------------------------%
 VOI    = getfield(load(options.eeg.source.mmnVOI), 'VOI');
 radius = options.eeg.source.radius;%mm
 usemsp = options.eeg.source.msp;
@@ -56,7 +56,7 @@ if usemsp
     spm_jobman('run', mspJob);    
 else
     beamformerJob = dmpad_beamformer_job(D, VOI, details);  
-    spm_jobman('interactive', beamformerJob);    
+    spm_jobman('run', beamformerJob);    
     if doVisualize        
         vis_beamformerJob = dmpad_visualise_beamformer_job(VOI, details);  
     end
@@ -69,9 +69,8 @@ D = spm_eeg_load(erpFile);
 D = chantype(D, D.indchannel(VOI(:, 1)), 'LFP');
 save(D);
 
-%-- create images ------------------------------------------------%
+%-- create images --------------------------------------------------------%
 options.eeg.conversion.space = 'source';
-options.eeg.conversion.convTimeWindow = [100 449];
 chan = D.indchantype('LFP');
 pathStats  = fullfile(details.eeg.erp.source.pathStats, options.eeg.erp.regressors{1});
 pfxImages = details.eeg.firstLevel.source.prefixImages;
@@ -86,11 +85,11 @@ for i = 1:length(chan)
     S.D = D;
     S.mode = 'time';
     S.conditions = cell(1, 0);
-    S.timewin = options.eeg.conversion.convTimeWindow;
+    S.timewin = options.eeg.stats.firstLevelSourceAnalysisWindow;
     S.channels = stringChannel;
     S.prefix = [pfxImages stringChannel '_'];
 
-    [images, outroot] = spm_eeg_convert2images(S);
+    [images, ~] = spm_eeg_convert2images(S);
 
     % and smooth the resulting images
     tnueeg_smooth_images(images, options);

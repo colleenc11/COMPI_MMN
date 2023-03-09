@@ -37,6 +37,7 @@ options.eeg.stats.exampleID     = '0001';
 options.eeg.stats.overwrite     = 1;
 
 %% EEG Source Analysis----------------------------------------------------%
+options.eeg.stats.firstLevelSourceAnalysisWindow = [100 449];
 
 options.eeg.source.mmnVOI         = fullfile(options.roots.config, 'compi_voi_msp_mmn.mat');
 options.eeg.source.radius         = 16;
