@@ -21,11 +21,14 @@ for i_group = 1:length(options.subjects.group_labels)
 end
 
 % compute group difference
-switch options.eeg.type
-    case 'sensor'
-        compi_2ndlevel_singletrial_groupdiff(options);
-    case 'source'
-        compi_2ndlevel_singletrial_source_groupdiff(options);
+if length(options.subjects.group_labels) == 2
+    switch options.eeg.type
+        case 'sensor'
+            compi_2ndlevel_singletrial_groupdiff(options);
+        case 'source'
+            compi_2ndlevel_singletrial_source_groupdiff(options);
+    end
 end
+
 
 end
