@@ -24,6 +24,10 @@ regressors.delta1              = abs(bopars.traj.da(:,1));
 regressors.delta2              = bopars.traj.da(:,2);
 regressors.delta3              = bopars.traj.da(:,3);
 
+% precision ratio
+regressors.psi2                 = bopars.traj.psi(:,2);
+regressors.psi3                 = bopars.traj.psi(:,3);
+
 % precision
 regressors.pi1                 = 1./bopars.traj.sahat(:,1);
 % 1/informationalUncertainty

@@ -21,8 +21,13 @@ switch options.eeg.stats.mode
         spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
                                 regressorName);
     case 'ERP'
-        spmRoot = fullfile(options.roots.erp, options.condition, ...
-                regressorName, 'SPM', 'diffwave');
+        if strcmp(options.condition, 'groupdiff')
+            spmRoot = fullfile(options.roots.erp, options.condition, ...
+                    regressorName, 'SPM');
+        else
+            spmRoot = fullfile(options.roots.erp, options.condition, ...
+                    regressorName, 'SPM', 'diffwave');
+        end
 end
 
 

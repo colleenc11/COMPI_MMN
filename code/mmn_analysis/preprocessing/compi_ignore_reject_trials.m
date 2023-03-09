@@ -1,9 +1,13 @@
 function compi_ignore_reject_trials(id, options)
+% -------------------------------------------------------------------------
+% COMPI_IGNORE_REJECT_TRIALS Remove rejected trials due to eyeblinks and
+% artefacts from design matrix.
 %
 % IN
 %   id          subject id string, only number (e.g. '153')
 %   options     general analysis options%
 %               options = compi_set_analysis_options;
+% ------------------------------------------------------------------------- 
 
 % paths and files
 details = compi_get_subject_details(id, options); % subject-specific information
@@ -24,6 +28,7 @@ end
 % now, remove other artefactual trials
 badtrials = get_bad_trials(details);
 remove_bad_trials(badtrials, options, details);
+
 end
 
 function bt = get_bad_trials(details)

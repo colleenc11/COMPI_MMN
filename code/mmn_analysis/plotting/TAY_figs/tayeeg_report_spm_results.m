@@ -31,8 +31,8 @@ end
 options.condition = flag;
 
 % scalpmap images of first regressor
-switch flag
-    case options.condition
+switch options.condition
+    case {'HC', 'CHR'}
         switch options.eeg.stats.mode
             case 'modelbased'
                 spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
@@ -57,7 +57,7 @@ switch flag
         pngFiles = fullfile(spmRoot, regressorNames{1}, 'scalpmaps_*.png');
         % adjust title and contrast depending on comparison
         contrastTitle = [options.subjects.group_labels{1} ' > ' options.subjects.group_labels{2}];
-        contrastIdx = 3;
+        contrastIdx = 5;
         nVoxMin = 1;
 end
 
@@ -102,8 +102,13 @@ catch
                 spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
                             regressorNames{iReg});
             case 'ERP'
-                spmRoot = fullfile(options.roots.erp, options.condition, ...
-                        regressorNames{iReg}, 'SPM', 'diffwave');
+                if strcmp(options.condition, 'groupdiff')
+                    spmRoot = fullfile(options.roots.erp, options.condition, ...
+                            regressorNames{iReg}, 'SPM');
+                else
+                    spmRoot = fullfile(options.roots.erp, options.condition, ...
+                            regressorNames{iReg}, 'SPM', 'diffwave');
+                end
         end
 
         xSPM = struct;

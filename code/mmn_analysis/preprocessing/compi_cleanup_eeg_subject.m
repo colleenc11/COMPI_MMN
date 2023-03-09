@@ -1,11 +1,13 @@
 function compi_cleanup_eeg_subject(id, options)
-% Deletes previous preproc/stats files of analysis specified in options, if
-% the same analysis step should be done again
+% -------------------------------------------------------------------------
+% COMPI_CLEANUP_EEG_SUBJECT Deletes previous preproc/stats files of analysis 
+% specified in options, if the same analysis step should be done again
 % e.g. deletes preproc files, if preproc is a pipeline option
 %
 % IN
-%   doDeleteAllAnalyses  (Default: false) delete all preprocessed data and analyses for a
-%                       subject
+%       doDeleteAllAnalyses  (Default: false) delete all preprocessed data 
+%                             and analyses for a subject
+% -------------------------------------------------------------------------
 
 details = compi_get_subject_details(id, options);
 
@@ -13,7 +15,6 @@ details = compi_get_subject_details(id, options);
 doCreateRegressors      = ismember('create_behav_regressors', options.eeg.pipe.executeStepsPerSubject);
 doCorrectEyeBlinks      = ismember('correct_eyeblinks', options.eeg.pipe.executeStepsPerSubject);
 doIgnoreRejectTrials    = ismember('ignore_reject_trials', options.eeg.pipe.executeStepsPerSubject);
-doPhaseERP              = ismember('run_phase_erp', options.eeg.pipe.executeStepsPerSubject);
 doRegressorERP          = ismember('run_regressor_erp', options.eeg.pipe.executeStepsPerSubject);
 doRunStatsSensor        = ismember('run_stats_sensor', options.eeg.pipe.executeStepsPerSubject);
 doRunSources            = ismember('extract_sources', options.eeg.pipe.executeStepsPerSubject);
@@ -21,7 +22,6 @@ doRunStatsSource        = ismember('run_stats_source', options.eeg.pipe.executeS
 doComputeBetaWave       = ismember('compute_beta_wave', options.eeg.pipe.executeStepsPerSubject);
 
 filesToDelete = {}; % could also be folders
-
 
 if doCreateRegressors
     filesToDelete{end+1} = details.eeg.firstLevelDesignFileInit;
@@ -35,8 +35,7 @@ if doIgnoreRejectTrials
     filesToDelete{end+1} = details.eeg.firstLevelDesignFilePruned;
 end
 
-%%% TO DO: seperate options %%%
-if doPhaseERP || doRegressorERP
+if doRegressorERP
     filesToDelete{end+1} = details.eeg.erp.root;
 end
 

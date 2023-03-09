@@ -1,7 +1,7 @@
 function D = compi_preprocessing(id, options)
 % -------------------------------------------------------------------------
-% Performs all analysis steps for one subject of the COMPI study (up until 
-% first level modelbased statistics)
+% Performs data preprocessing for one subject of the COMPI study (up until 
+% artefact rejection)
 %
 %   IN:     id          subject identifier string, e.g. '0001'
 %           options     as set by compi_set_analysis_options();
@@ -10,7 +10,7 @@ function D = compi_preprocessing(id, options)
 % ------------------------------------------------------------------------- 
 
 %% Set paths and files
-details = compi_get_subject_details(id, options); % subject-specific information
+details = compi_get_subject_details(id, options);
 
 % record what we're doing
 diary(details.eeg.logfile);
@@ -43,11 +43,11 @@ catch
     spm('defaults', 'eeg');
     spm_jobman('initcfg');
     
-    % Convert BDF files
+    % Convert EEG files
     D = compi_eeg_convert(details.files.eeg);
     fprintf('\nConversion done.\n\n');
 
-    % Start trigger and deviant represented by value 1. Changing start 
+    % Start trigger and deviant represented by value of 1. Changing start 
     % trigger value to 4 so this won't be used for epoching later.
     ev = D.events;
     for i = 1:6 % assume start trigger in first few events
@@ -65,7 +65,6 @@ catch
         D = tnueeg_do_montage(D, montage, options);
         fprintf('\nChannel swapping done.\n\n');
     end
-
 
     %-- set channel types (EEG, EOG) -------------------------------------%
     if ~exist(details.eeg.channeldef, 'file')
@@ -129,7 +128,7 @@ catch
     end
 
     save(details.eeg.eyeblinkrejectstats, 'ebstats');
-    
+  
     
     %-- experimental epoching --------------------------------------------%
     De = tnueeg_epoch_experimental(D, trialdef, options);
@@ -192,7 +191,7 @@ catch
                 case 'pssp'
                     % Remove wrong eyeblink trials before computing confound
                     % components
-                    if isfield(options.eeg.preproc.artifact, 'lowPassFilter')
+                    if options.eeg.preproc.artifact.applylowPass
                         filterOptions.eeg.preproc.lowpassfreq = options.eeg.preproc.artifact.lowPassFilter;
                         filterOptions.eeg.preproc.keep = 1;
                         DaF = tnueeg_filter(Da, 'low', filterOptions);
@@ -226,7 +225,8 @@ catch
             end
     
             saveas(gcf,details.eeg.eyeblinkconfoundsfigure,'fig');
-            saveas(gcf, fullfile(options.roots.diag_eeg, 'EB_confounds', [id '_EB_confounds']),'png');
+            saveas(gcf, fullfile(options.roots.diag_eeg, 'EB_confounds', ...
+                [id '_EB_confounds']),'png');
             
             
             % add spatial confounds to condition epochs
@@ -259,6 +259,9 @@ catch
                 delete(fullfile(S.D.path, S.D.inv{1}.gainmat));
                 delete(S.D);
             end
+
+            hmJob{1}.spm.meeg.source.headmodel.D = {fullfile(D)};
+            spm_jobman('run', hmJob);
             
     end
 

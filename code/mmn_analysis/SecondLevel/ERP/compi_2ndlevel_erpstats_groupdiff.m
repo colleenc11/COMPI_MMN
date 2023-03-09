@@ -49,7 +49,7 @@ catch
         disp(['Computing group difference stats for ' factorNames{i_reg}  ' ERPs...']);
 
         % get covaiates for both groups
-        if options.eeg.erp.covars
+        if options.eeg.covars
             covars = compi_get_covariates(options, options.subjects.all);
         else
             covars = {};

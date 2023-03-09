@@ -12,12 +12,10 @@ function compi_2ndlevel_singletrial_percondition(options)
 % record what we're doing
 diary(fullfile(options.roots.log, sprintf('secondlevel_model_%s')));
 
-factorNames = options.eeg.stats.regressors;
-
 try
     % check for previous statistics
     spmFile = fullfile(options.roots.model, options.condition, ...
-        factorNames{1}, 'SPM.mat');
+        options.eeg.stats.regressors{1}, 'SPM.mat');
     load(spmFile);
     disp(['2nd level stats for regressors in ' options.eeg.stats.design ...
         ' design in condition ' options.condition ...
@@ -56,7 +54,7 @@ catch
             end
 
             % get group covariate information
-            if options.eeg.stats.covars
+            if options.eeg.covars
                 covars = compi_get_covariates(options, options.subjects.IDs{i_group});
             else
                 covars = {};
@@ -67,7 +65,7 @@ catch
 
     % compute the effect of the single-trial regressors on the second level
     compi_2ndlevel_singletrial_groupmean_cov(scndlvlroot, imagePaths, ...
-        factorNames, options, covars)
+        options, covars)
     
     disp(['Computed 2nd-level statistics for regressors for ' ...
         options.condition ' condition in the ' ...

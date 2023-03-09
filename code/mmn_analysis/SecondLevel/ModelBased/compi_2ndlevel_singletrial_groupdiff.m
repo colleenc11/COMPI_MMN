@@ -49,7 +49,7 @@ catch
             options.eeg.stats.design  ' design...']);
         
         % make sure we have a results directory
-        scndlvlroot = fullfile(options.roots.results_hgf, 'group_diff', options.eeg.stats.regressors{i_reg});
+        scndlvlroot = fullfile(options.roots.results_hgf, 'groupdiff', options.eeg.stats.regressors{i_reg});
         if ~exist(scndlvlroot, 'dir')
             mkdir(scndlvlroot);
         end
@@ -66,12 +66,12 @@ catch
         for i_group = 1: numel(options.subjects.group_labels)
 
             switch options.eeg.stats.design
-%                 case 'epsilon'
-%                     for sub = 1: length(options.subjects.IDs{i_group})
-%                         subID = char(options.subjects.IDs{i_group}{sub});
-%                         details = compi_get_subject_details(subID, options);
-%                         imagePaths{sub, i_group} = fullfile(details.eeg.firstLevel.sensor.pathStats, ['beta_000' num2str(i_reg+1) '.nii,1']);
-%                     end
+                case {'lowPE', 'highPE', 'epsilons'}
+                    for sub = 1: length(options.subjects.IDs{i_group})
+                        subID = char(options.subjects.IDs{i_group}{sub});
+                        details = compi_get_subject_details(subID, options);
+                        imagePaths{sub, i_group} = fullfile(details.eeg.firstLevel.sensor.pathStats, ['beta_000' num2str(i_reg+1) '.nii,1']);
+                    end
                 otherwise
                     for sub = 1: length(options.subjects.IDs{i_group})
                         subID = char(options.subjects.IDs{i_group}{sub});
@@ -82,7 +82,7 @@ catch
         end
     
         % get covaiates for both groups
-        if options.eeg.stats.covars
+        if options.eeg.covars
             covars = compi_get_covariates(options, options.subjects.all);
         else
             covars = {};

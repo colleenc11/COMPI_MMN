@@ -22,6 +22,7 @@ switch lower(type)
         stringRerunFunction = 'dmpad_preprocessing_eyeblink_correction';
         pathImages  = details.eeg.firstLevel.sensor.pathImages;
         pathStats   = fullfile(details.eeg.firstLevel.sensor.pathStats, factors{1});
+        analysisWindow = options.eeg.stats.firstLevelAnalysisWindow;
         switch options.eeg.preproc.smoothing
             case 'yes'
                 fileImage   = details.eeg.conversion.sensor.smoofile;
@@ -34,8 +35,9 @@ switch lower(type)
         fileToLoad = details.eeg.source.filename;
         stringRerunFunction = 'dmpad_source';
         pathImages  = details.eeg.firstLevel.source.pathImages;
-        pathStats  = details.eeg.firstLevel.source.pathStats;
+        pathStats  = fullfile(details.eeg.firstLevel.source.pathStats, factors{1});
         pfxImages = details.eeg.firstLevel.source.prefixImages;
+        analysisWindow = options.eeg.stats.firstLevelSourceAnalysisWindow;
         switch options.eeg.preproc.smoothing
             case 'yes'
                 fileImage   = details.eeg.conversion.source.smoofile;
@@ -80,12 +82,6 @@ else
 end
 
 design = getfield(load(fileDesignMatrix), 'design');
-%factors = fieldnames(design);
-% factors = options.eeg.stats.regressors;
-% factors(end+1) = {'Phase'};
-% factors(end+1) = {'Drift'};
-
-
 
 
 %% Set up GLM design and estimate job
@@ -105,7 +101,7 @@ else % convert2Images is first job
     iJobFactorialDesign = 2;
     % same for all conversion jobs
     job{1}.spm.meeg.images.convert2images.conditions = cell(1, 0);
-    job{1}.spm.meeg.images.convert2images.timewin = options.eeg.stats.firstLevelAnalysisWindow;
+    job{1}.spm.meeg.images.convert2images.timewin = analysisWindow;
     job{1}.spm.meeg.images.convert2images.D = {fullfile(D)};
     job{iJobFactorialDesign}.spm.stats.factorial_design.des.mreg.scans(1) = cfg_dep('Convert2Images: M/EEG exported images', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));
 end
@@ -141,22 +137,17 @@ job{iJobFcon}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File'
 
 %% Change analysis type in function
 switch type
-    case 'sensor'
-        
-        %% Set up converted Image input file dependencies for GLM
+    case 'sensor'      
+        % Set up converted Image input file dependencies for GLM
         if ~hasConvertedImages
-            % convert2Images First
-            
-            %% image conversion job
+            % convert2Images First          
+            % image conversion job
             job{1}.spm.meeg.images.convert2images.mode = 'scalp x time';
             job{1}.spm.meeg.images.convert2images.channels{1}.type = 'EEG';
             job{1}.spm.meeg.images.convert2images.prefix = details.eeg.firstLevel.sensor.prefixImages;
         end
         
-        
-        
     case 'source'
-        
         % images are always converted...
         D = copy(D, spm_file(fullfile(D), 'prefix', 'abs'));
         chan = D.indchantype('LFP');
@@ -165,7 +156,6 @@ switch type
         job{1}.spm.meeg.images.convert2images.mode = 'time';
         
     case 'tfsource'
-        
         % images are always converted...
         chan = D.indchantype('EEG');
         job{1}.spm.meeg.images.convert2images.mode = 'time x frequency';

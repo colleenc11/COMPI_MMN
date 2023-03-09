@@ -30,6 +30,6 @@ for i_group = 1:length(options.subjects.group_labels)
 
 end
 
-tayeeg_report_spm_results(options, 'group_diff');
+tayeeg_report_spm_results(options, 'groupdiff');
 
 end

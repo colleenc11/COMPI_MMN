@@ -1,9 +1,11 @@
 function compi_eeg_subject_analysis( id, options )
+% -------------------------------------------------------------------------
 % COMPI_EEG_SUBJECT_ANALYSIS Performs all analysis steps for one subject 
 % of the COMPI study (up until first level modelbased statistics).
 % Adapted from dmpad-toolbox: compi_eeg_analyze_subject.
 %   IN:     id          subject identifier string, e.g. '0101'
 %           options     as set by compi_set_analysis_options();
+% -------------------------------------------------------------------------
 
 fprintf('\n===\n\t The following pipeline Steps per subject were selected. Please double-check:\n\n');
 disp(options.eeg.pipe.executeStepsPerSubject);
@@ -27,13 +29,7 @@ end
 
 % Creates regressors from behavioral model
 if doCreateRegressors
-    doPlotFigure = true;
-    switch options.task.type
-        case 'ioio'
-            compi_create_behav_regressors(id, options, doPlotFigure);
-        case 'mmn'
-            compi_mmn_model(id, options);
-    end
+    compi_mmn_model(id, options);
 end
 
 % Preparation and Pre-processing
@@ -47,23 +43,40 @@ if doIgnoreRejectTrials
     compi_ignore_reject_trials(id, options);
 end
 
+%% ------------------------------------------------------------------------
+% ERP BASED ANALYSIS
+% -------------------------------------------------------------------------
+
 % Compute ERPs for model regressors (e.g. epsilons)
 if doRegressorERP
     fprintf('Running regressor ERP analysis for %s', id);
     compi_erp(id, options);
 end
 
+% Extract sources based on MIP or fMRI priors for oddball waveform
+if doRunERPSources
+    tmpType = options.eeg.type;
+    options.eeg.type = 'source';
+    fprintf('Extracting source waveforms for %s', id);
+    compi_source_erp(id, options, options.eeg.source.doVisualize)
+    options.eeg.type = tmpType;
+end
+
+%% ------------------------------------------------------------------------
+% MODEL BASED ANALYSIS
+% -------------------------------------------------------------------------
+
 % Image conversion and GLM in sensor space
+% Based on design matrix, include regressors in one or seperate design
 if doRunStatsSensor
     fprintf('Running GLM for %s (Sensor space)', id);
-    switch options.eeg.stats.design
-%         case 'epsilon'
-%             compi_stats_adaptable(id, options);
-        otherwise
-            for i = 1: (numel(options.eeg.stats.regressors)) 
-                factor = {options.eeg.stats.regressors{i}};
-                compi_stats_adaptable_single_reg(id, factor, options);
-            end
+    if options.eeg.stats.regDesignSplit
+        for i = 1: (numel(options.eeg.stats.regressors)) 
+            factor = {options.eeg.stats.regressors{i}};
+            compi_stats_adaptable_single_reg(id, factor, options);
+        end
+    else
+        compi_stats_adaptable(id, options);
     end
 end
 
@@ -72,7 +85,7 @@ if doRunSources
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Extracting source waveforms for %s', id);
-    dmpad_source(id, options, options.eeg.source.doVisualize)
+    compi_source(id, options, options.eeg.source.doVisualize)
     options.eeg.type = tmpType;
 end
 
@@ -81,8 +94,16 @@ if doRunStatsSource
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Running GLM for %s (Source space)', id);
-    dmpad_stats_adaptable(id, options);
+    if options.eeg.stats.regDesignSplit
+        for i = 1: (numel(options.eeg.stats.regressors)) 
+            factor = {options.eeg.stats.regressors{i}};
+            compi_stats_adaptable_single_reg(id, factor, options);
+        end
+    else
+        compi_stats_adaptable(id, options);
+    end
     options.eeg.type = tmpType;
+    options.eeg.stats.firstLevelAnalysisWindow = [100 450];
 end
 
 % Compute Beta Waveform

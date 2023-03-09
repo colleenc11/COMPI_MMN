@@ -1,18 +1,18 @@
 function compi_mmn_model(id, options)
+% -------------------------------------------------------------------------
 % COMPI_MMN_MODEL Simulates the beliefs of one subject from the COMPI 
 % study and saves the trajectories for modelbased analysis of EEG data. All
 % subjects receive same tone input in COMPI study.
 % See mmn_binary_trialDef for calculation of tones.
 %   IN:     id          - subject identifier, e.g '0101'
-%           optionally:
 %           options     - the struct that holds all analysis options
-%   OUT:    design      - the design file which holds the modelbased regressors for this subject
+%   OUT:    design      - the design file which holds the modelbased 
+%                         regressors for this subject
+% -------------------------------------------------------------------------
 
-
-
+%% Main
 % paths and files
 details = compi_get_subject_details(id, options);
-
 
 % record what we're doing
 diary(details.eeg.logfile);
@@ -49,7 +49,6 @@ catch
 
     %-- modify design file -----------------------------------------------%
     % INSERT SPECIAL CASE SUBJECTS HERE
-
 
     save(fullfile(details.dirs.preproc, ['design.mat']),'design','-mat');
 

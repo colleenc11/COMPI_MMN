@@ -12,7 +12,7 @@ compi_plot_ebRate(5, options);
 % Plot eye-blink rates for all subjects
 % compi_mmn_plot_RTs_hits(options);
 
-for idCell = options.subjects.IDs{2} %all
+for idCell = options.subjects.all
     id = char(idCell);
 
     % Plot eye-blinks before and after
@@ -24,4 +24,4 @@ for idCell = options.subjects.IDs{2} %all
 end
 
 % Overlap between standard/deviants and model regressors
-[condTable, regOverlap] = compare_regressor_overlap(id, options);
+% [condTable, regOverlap] = compare_regressor_overlap(id, options);

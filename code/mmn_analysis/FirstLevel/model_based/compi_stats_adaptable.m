@@ -21,7 +21,8 @@ switch lower(type)
         fileToLoad = details.eeg.prepfile;
         stringRerunFunction = 'dmpad_preprocessing_eyeblink_correction';
         pathImages  = details.eeg.firstLevel.sensor.pathImages;
-        pathStats   = details.eeg.firstLevel.sensor.pathStats;
+        pathStats   = fullfile(details.eeg.firstLevel.sensor.pathStats);
+        analysisWindow = options.eeg.stats.firstLevelAnalysisWindow;
         switch options.eeg.preproc.smoothing
             case 'yes'
                 fileImage   = details.eeg.conversion.sensor.smoofile;
@@ -34,8 +35,9 @@ switch lower(type)
         fileToLoad = details.eeg.source.filename;
         stringRerunFunction = 'dmpad_source';
         pathImages  = details.eeg.firstLevel.source.pathImages;
-        pathStats  = details.eeg.firstLevel.source.pathStats;
+        pathStats  = fullfile(details.eeg.firstLevel.source.pathStats, options.eeg.stats.design);
         pfxImages = details.eeg.firstLevel.source.prefixImages;
+        analysisWindow = options.eeg.stats.firstLevelSourceAnalysisWindow;
         switch options.eeg.preproc.smoothing
             case 'yes'
                 fileImage   = details.eeg.conversion.source.smoofile;
@@ -80,13 +82,7 @@ else
 end
 
 design = getfield(load(fileDesignMatrix), 'design');
-%factors = fieldnames(design);
 factors = options.eeg.stats.regressors;
-% factors(end+1) = {'Phase'};
-% factors(end+1) = {'Drift'};
-
-
-
 
 %% Set up GLM design and estimate job
 % Preparation
@@ -105,7 +101,7 @@ else % convert2Images is first job
     iJobFactorialDesign = 2;
     % same for all conversion jobs
     job{1}.spm.meeg.images.convert2images.conditions = cell(1, 0);
-    job{1}.spm.meeg.images.convert2images.timewin = options.eeg.stats.firstLevelAnalysisWindow;
+    job{1}.spm.meeg.images.convert2images.timewin = analysisWindow;
     job{1}.spm.meeg.images.convert2images.D = {fullfile(D)};
     job{iJobFactorialDesign}.spm.stats.factorial_design.des.mreg.scans(1) = cfg_dep('Convert2Images: M/EEG exported images', substruct('.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}, '.','val', '{}',{1}), substruct('.','files'));
 end
