@@ -14,7 +14,7 @@ options = compi_mmn_options([3 1 1 2 2 3 2 2 2 2]);
 % badTrialsThreshold              = {'80', '100', '75'};
 % eyeDetectionThreshold           = {'subject-specific', 'default'};
 % eyeCorrectionMethod             = {'SSP', 'Berg', 'reject','PSSP'};
-% eyeCorrectionComponentsNumber   = {'3', '1'};
+% eyeCorrectionComponentsNumber   = {'3', '1', '2'};
 % downsample                      = {'no', 'yes'};
 % lowpass                         = {'45', '35', '30'};
 % baseline                        = {'0', '1'};
@@ -30,6 +30,7 @@ options = compi_mmn_options([3 1 1 2 2 3 2 2 2 2]);
 % compi_ioio_behav_analysis(options);
 
 % compi_create_matched_groups(options);
+%compi_calculate_fisherCorr(options)
 
 %% Preprocessing
 % ---------------------------------------------------------------------------------
@@ -52,7 +53,32 @@ compi_quality_check(options);
 %  ------------------------------------------------------------------------
 fprintf('\n===\n\t Running second level model-based analysis: \n\n');
 
-compi_2ndlevel_modelbased(options);
+regressors = {'epsilon', 'lowPE', 'highPE'};
+
+for i_reg = 1:length(regressors)
+    options.eeg.stats.design = regressors{i_reg};
+
+    switch options.eeg.stats.design
+        case 'epsilon'
+            options.eeg.stats.regressors = {'epsilon2', 'epsilon3'};
+            options.eeg.stats.regDesignSplit = 1;
+        case 'delta'
+            options.eeg.stats.regressors = {'delta1', 'delta2'};
+            options.eeg.stats.regDesignSplit = 1;
+        case 'precision'
+            options.eeg.stats.regressors = {'pi1', 'pi2', 'pi3'};
+            options.eeg.stats.regDesignSplit = 1;
+        case 'lowPE'
+            options.eeg.stats.regressors = {'delta1', 'psi2'};
+            options.eeg.stats.regDesignSplit = 0;
+        case 'highPE'
+            options.eeg.stats.regressors = {'delta2', 'psi3'};
+            options.eeg.stats.regDesignSplit = 0;
+    end
+    
+    compi_2ndlevel_modelbased(options);
+
+end
 
 %% ------------------------------------------------------------------------
 %  Second level: Group Phase ERP
@@ -66,3 +92,7 @@ compi_2ndlevel_erpbased(options);
 %  ------------------------------------------------------------------------
 
 tayeeg_results_report_modelbased(options);
+
+% plot source results
+compi_plot_source_waveforms(options);
+

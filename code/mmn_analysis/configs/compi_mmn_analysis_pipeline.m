@@ -27,12 +27,12 @@ function options = compi_mmn_analysis_pipeline(options)
 %  See also dmpad_analyze_subject
 
 options.eeg.pipe.executeStepsPerSubject = {
-%     'cleanup'
+    'cleanup'
     'correct_eyeblinks'
-%     'create_behav_regressors'
-%     'ignore_reject_trials'
-%     'run_regressor_erp'
-%     'run_stats_sensor'
+    'create_behav_regressors'
+    'ignore_reject_trials'
+    'run_regressor_erp'
+    'run_stats_sensor'
     'extract_sources'
     'run_stats_source'
     };

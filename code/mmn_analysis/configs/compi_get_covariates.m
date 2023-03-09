@@ -39,11 +39,11 @@ for idx = 1:length(IDs)
 end
 
 % take z-score
-covars_z = zscore([panss_pos_T0],[],1);
+covars_z = zscore([GF_social_T0],[],1);
 
 % convert to table
-covars = array2table([panss_pos_T0]);
-covars.Properties.VariableNames = {'panss_pos_T0'};
+covars = array2table([covars_z]);
+covars.Properties.VariableNames = {'GF_social_T0'};
 
 
 
