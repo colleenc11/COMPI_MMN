@@ -38,7 +38,7 @@ for reg = 1: numel(regressors)
     scans = cell(nSubjects, 1);
 
     switch options.eeg.stats.design
-        case {'lowPE', 'highPE'}
+        case {'lowPE', 'highPE', 'epsilons'}
             for sub = 1: nSubjects
                 scans{sub, 1} = char(fullfile(imagePaths{sub}, ['beta_000' num2str(reg+1) '.nii,1']));
             end

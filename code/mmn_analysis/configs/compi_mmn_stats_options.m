@@ -27,6 +27,9 @@ switch options.eeg.stats.design
     case 'highPE'
         options.eeg.stats.regressors = {'delta2', 'psi3'};
         options.eeg.stats.regDesignSplit = 0;
+    case 'epsilons'
+        options.eeg.stats.regressors = {'epsilon2', 'epsilon3'};
+        options.eeg.stats.regDesignSplit = 0;
 end
 
 options.eeg.stats.pValueMode    = 'clusterFWE';
