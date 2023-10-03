@@ -1,51 +1,62 @@
-function [covars] = compi_get_covariates(options,IDs)
+function [covar_table] = compi_get_covariates(covariate_list, subject_IDs, options, do_zscore)
+%--------------------------------------------------------------------------
+% COMPI_GET_COVARIATES Returns specific covariates for subjects 
+% specified in subject_IDs.
+%
+%   IN:     covariate_list     list of covariates of interest
+%           subject_IDs        subject ids we want covariates for
+%           options            as set by mnCHR_set_analysis_options();
+%           zscore             whether to take zscore of covars (default 1)
+%   OUT:    -
+%--------------------------------------------------------------------------
 
-
-%% Main
-% Read data
-T = readtable(fullfile(options.roots.data, 'clinical', 'input_mask_LM_summed.xlsx'));
-
-
-%% Collect Covariates
-
-age             = NaN(length(IDs),1);
-wm              = NaN(length(IDs),1);
-ed_yrs          = NaN(length(IDs),1);
-antipsych       = NaN(length(IDs),1);
-antidep         =  NaN(length(IDs),1);
-panss_pos_T0    =  NaN(length(IDs),1);
-GF_social_T0    =  NaN(length(IDs),1);
-GF_role_T0      =  NaN(length(IDs),1);
-GF_total_T0     =  NaN(length(IDs),1);
-
-for idx = 1:length(IDs)
-
-    if IDs{idx} == '0139'
-        row = strcmp(T.id, ['COMPI_' IDs{idx} '_2']);
-    else
-        row = strcmp(T.id, ['COMPI_' IDs{idx}]);
-    end
-    
-    age(idx)            = T.SocDem_age(row);
-    wm(idx)             = T.DS_backward(row);
-    ed_yrs(idx)         = T.SocDem_education_years_total(row);
-    antipsych(idx)      = T.medication_antipsych_T0(row);
-    antidep(idx)        = T.medication_antidep_T0(row);
-    panss_pos_T0(idx)   = T.PANSS_P_SUM_T0(row);
-    GF_social_T0(idx)   = T.GF_social_T0(row);
-    GF_role_T0(idx)     = T.GF_role_T0(row);
-    GF_total_T0(idx)     = T.GF_total_T0(row);
-
+% general analysis options
+if nargin < 4
+    do_zscore = 1;
 end
 
-% take z-score
-covars_z = zscore([GF_social_T0],[],1);
+%% Read data
+T = readtable(fullfile(options.roots.data, 'clinical', 'input_mask_LM_summed.xlsx'));
 
-% convert to table
-covars = array2table([covars_z]);
-covars.Properties.VariableNames = {'GF_social_T0'};
+%% Collect subject IDs
+all_IDs = table2array(T(:,1));
 
+%% Initialize covariate structure
+covariate_struct = struct();
 
+%% Collect covariates
+% Loop through covariates for each subject
+for i_cov = 1:length(covariate_list{1,1})
+    % current_covariate = char(covariate_list{i_cov});
+    current_covariate = char(covariate_list{1,1}(i_cov));
 
-% covars = array2table([age wm antipsych antidep, panss_pos_T0]);
-% covars.Properties.VariableNames = {'age', 'wm', 'antipsych', 'antidep', 'panss_pos_T0'};
+    for idx = 1:length(subject_IDs)
+        
+        % Find subject in data table
+        for i_row = 1:numel(all_IDs)
+            if find(strcmp(all_IDs{i_row}(end-3:end), subject_IDs{idx})) 
+                % match found, do something
+                row = i_row;
+                break
+            end
+        end
+        
+        % Get covariates
+        covariate_struct.(current_covariate)(idx) = (T{row, strcmp(T.Properties.VariableNames, current_covariate)})';
+    
+    end
+
+    % Take z-score of covariate
+    if do_zscore  
+        covariate_struct.(current_covariate) = zscore(covariate_struct.(current_covariate)', [], 1); 
+    end
+end
+
+%% Write output table
+covar_table = struct2table(covariate_struct);
+
+% Set VariableNames for each covariate
+% covar_table.Properties.VariableNames = covariate_list{1,1};
+% covar_table.Properties.VariableNames = {char(covariate_list{1,1}(1)), char(covariate_list{1,1}(2))};
+
+end

@@ -7,8 +7,6 @@ function options = compi_mmn_analysis_pipeline(options)
 %--------------------------------------------------------------------------
 
 % cell array with a subset of the following:
-% general (for all subgroups below)
-%     'cleanup'
 % preproc:
 %     'correct_eyeblinks'
 % stats (erp):
@@ -17,24 +15,20 @@ function options = compi_mmn_analysis_pipeline(options)
 %     'create_behav_regressors'
 %     'ignore_reject_trials'
 %     'run_stats_sensor'
-%     'compute_beta_wave'
 % stats (source):
 %     'extract_sources'
 %     'run_stats_source'
-%
-%  NOTE: 'cleanup' only cleans up files (deletes them) that will be
-%  recreated by the other specified pipeline steps in the array
-%  See also dmpad_analyze_subject
+%     'run_erp_source'
 
 options.eeg.pipe.executeStepsPerSubject = {
-    'cleanup'
-    'correct_eyeblinks'
-    'create_behav_regressors'
-    'ignore_reject_trials'
-    'run_regressor_erp'
-    'run_stats_sensor'
-    'extract_sources'
-    'run_stats_source'
+    % 'create_behav_regressors'
+    % 'correct_eyeblinks'
+    % 'ignore_reject_trials'
+    % 'run_regressor_erp'
+    % 'run_stats_sensor'
+    % 'extract_sources'
+    % 'run_stats_source'
+    'run_erp_source'
     };
 
 end

@@ -13,7 +13,7 @@ function tayeeg_plot_blobs(regressorName, options)
 %% Defaults
 
 % index of contrast in SPM file
-contrast_idx = 3;
+contrast_idx = 5;
 
 %% Set options
 switch options.eeg.stats.mode
@@ -26,7 +26,7 @@ switch options.eeg.stats.mode
                     regressorName, 'SPM');
         else
             spmRoot = fullfile(options.roots.erp, options.condition, ...
-                    regressorName, 'SPM', 'diffwave');
+                    regressorName, 'SPM', 'stableMMN');
         end
 end
 

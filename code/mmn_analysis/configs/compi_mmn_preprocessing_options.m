@@ -17,6 +17,8 @@ options.eeg.preproc.eyeCorrection           = true;
 options.eeg.preproc.eyeCorrMethod           = ...
     preprocessing.eyeCorrectionMethod{preprocessing.selectedStrategy.valueArray(3)};% other option; 'SSP'
 
+options.eeg.preproc.eyeCorrType             = 'subject-specific';
+
 options.eeg.preproc.downsample              = preprocessing.downsample{preprocessing.selectedStrategy.valueArray(5)};
 options.eeg.preproc.downsamplefreq          = 256;
 options.eeg.preproc.lowpassfreq             = str2num(preprocessing.lowpass{preprocessing.selectedStrategy.valueArray(6)});
@@ -31,6 +33,7 @@ options.eeg.preproc.eyeDetectionThreshold           = preprocessing.eyeDetection
 options.eeg.preproc.eyeDetectionThresholdDefault    = 3; % for SD thresholding: in standard deviations, for amp in uV
 options.eeg.preproc.nComponentsforRejection         = str2num(preprocessing.eyeCorrectionComponentsNumber{preprocessing.selectedStrategy.valueArray(4)});
 
+options.eeg.preproc.eyeComponentThreshold           = 'subject-specific';
 %% EB rejection options
 options.eeg.preproc.eyeblinkmode            = 'eventbased'; % uses EEG triggers for trial onsets
 options.eeg.preproc.eyeblinkwin             = [-500 500]; % in s around blink events
@@ -58,7 +61,7 @@ options.eeg.preproc.artifact.badchanthresh  = 0.2;
 
 options.eeg.preproc.rereferencing           = 'avref'; % avref, noref
 options.eeg.preproc.trialdef                = 'tone'; % tone, oddball
-options.eeg.preproc.epochwin                = [-100 450];
+options.eeg.preproc.epochwin                = [-100 500]; %500
 
 %% Steps you can turn on/off for saving/rewrite purposes
 options.eeg.preproc.overwrite               = 1; % whether to overwrite any prev. prepr
@@ -68,7 +71,7 @@ options.eeg.preproc.keepotherchannels       = 1; % for montage
 %% Conversion to images in sensor space
 options.eeg.conversion.space            = 'sensor';
 options.eeg.conversion.convPrefix       = 'sensor'; % whole, early, late, ERP
-options.eeg.conversion.convTimeWindow   = [100 450];
+options.eeg.conversion.convTimeWindow   = [100 400]; %500
 options.eeg.conversion.smooKernel       = [16 16 0];
 options.eeg.conversion.overwrite        = 1;
 

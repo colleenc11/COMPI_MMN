@@ -1,10 +1,10 @@
-function compi_preprocessing_eyeblink_correction( id, options )
+function D = compi_preprocessing_eyeblink_correction( id, options )
 % -------------------------------------------------------------------------
 % Performs all analysis steps for one subject of the COMPI study (up until 
 % first level modelbased statistics)
 %
 %   IN:     id          subject identifier string, e.g. '0101'
-%           options     as set by compi_set_analysis_options();
+%           options     as set by compi_mmn_options();
 %
 %   OUT:    D           Data structure of SPM EEG Analysis
 % ------------------------------------------------------------------------- 
@@ -70,16 +70,16 @@ catch
                 end
             catch
                 disp(['Converting subject ' id ' ...']);
-                
+
                 % convert EEG data
                 [images, ~] = tnueeg_convert2images(D, options);
                 disp(['Converted EEG data for subject ' id]);
-                
+
                 % and smooth the resulting images
                 tnueeg_smooth_images(images, options);
                 disp(['Smoothed images for subject ' id]);
             end
-              
+
     end
 
     cd(pathBefore);

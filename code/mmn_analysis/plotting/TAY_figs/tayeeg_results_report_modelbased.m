@@ -1,35 +1,41 @@
 function tayeeg_results_report_modelbased (options)
 %--------------------------------------------------------------------------
-% TAYEEG_RESULTS_REPORT_MODELBASED Performs all 2nd level analyses steps for
-% modelbased single-trial EEG analysis in the TAY study
-%   IN:     --
+% TAYEEG_RESULTS_REPORT_MODELBASED Create figures for modelbased 
+% single-trial EEG analysis in the TAY study
+%   IN:     options   - the struct that contains all analysis options
 %   OUT:    --
 %--------------------------------------------------------------------------
 
-options.eeg.stats.mode = 'modelbased'; %modelbased, ERP
-options.eeg.stats.overwrite = 1;
+%% General stats
 
-for i_group = 1:length(options.subjects.group_labels)
-    options.condition = char(options.subjects.group_labels{i_group});
-    
-    tayeeg_report_spm_results(options, options.condition);
+options.stats.pValueMode    = 'clusterFWE'; %clusterFWE, peakFWE
+options.fig.contrastIdx     = 3; %F-contrast
 
-    % Note contrast index set to 3 (f-test)
-    switch options.eeg.stats.mode
-        case 'modelbased'
-            for iReg = 1:length(options.eeg.stats.regressors)
-                regressor = char(options.eeg.stats.regressors{iReg});
-                tayeeg_plot_blobs(regressor, options);
-            end
-        otherwise
-            for iReg = 1:length(options.eeg.erp.regressors)
-                regressor = char(options.eeg.erp.regressors{iReg});
-                tayeeg_plot_blobs(regressor, options);
-            end
+%% Plot modelbased results
+options.stats.mode          = 'modelbased';   
+
+for i_reg = 1:length(options.eeg.stats.regressors)
+    options.eeg.stats.currRegressor = {options.eeg.stats.regressors{i_reg}};
+
+    for i_group = 1:length(options.subjects.group_labels)
+        options.condition = char(options.subjects.group_labels{i_group});
+        tayeeg_report_spm_results(options, options.condition);
+        tayeeg_plot_blobs(options);
     end
-
+ 
 end
 
 tayeeg_report_spm_results(options, 'groupdiff');
+
+%% Plot erpbased results
+options.stats.mode          = 'erpbased';  
+options.eeg.stats.currRegressor   = {'oddball'};
+
+for i_group = 1:length(options.subjects.group_labels)
+    options.condition = char(options.subjects.group_labels{i_group});
+    tayeeg_report_spm_results(options, options.condition);
+    tayeeg_plot_blobs(options);
+end
+
 
 end
