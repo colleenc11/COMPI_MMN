@@ -1,5 +1,8 @@
 function compi_setup_spm(modality)
-% sets up SPM with reasonable parameters
+% -------------------------------------------------------------------------
+% COMPI_SETUP_SPM sets up SPM with reasonable parameters
+%   IN:     modality     data type (EEG or fMRI)
+% -------------------------------------------------------------------------
 if nargin < 1
     modality = 'EEG';
 end

@@ -12,9 +12,9 @@ function compi_2ndlevel_singletrial_sourceERP_groupmean_cov(scndlvlroot, imagePa
 %           options         - the struct that holds all analysis options
 %           covars          - covariates (table) for all subjects
 %   OUT:    --
-%--------------------------------------------------------------------------
-
+% 
 % Adapted from: TNUEEG_2NDLEVEL_SINGLETRIAL_GROUPMEAN
+%--------------------------------------------------------------------------
 
 %% Main 
 
@@ -25,8 +25,8 @@ nSubjects = numel(imagePaths);
 spm('defaults', 'EEG');
 spm_jobman('initcfg');
 
-VOI    = getfield(load(options.eeg.source.mmnVOI), 'VOI');
-regressors = options.eeg.erp.regressors;
+VOI        = getfield(load(options.eeg.source.VOI), 'VOI');
+regressors = options.eeg.stats.regressors;
 
 for reg = 1: numel(regressors)
     regressorName = char(regressors{reg});
@@ -43,17 +43,15 @@ for reg = 1: numel(regressors)
         % collect the regressor's source beta image from each subject
         scans = cell(nSubjects, 1);
     
-        switch options.eeg.erp.type
-            case {'oddball'}
-                for sub = 1: nSubjects
-                    scans{sub, 1} = char(fullfile(imagePaths{sub}, ['source_' label '_' regressorName], ...
-                        'smoothed_condition_mmn.nii,1'));
-                end
+        if startsWith(regressor, 'oddball')
+            for sub = 1: nSubjects
+                scans{sub, 1} = char(fullfile(imagePaths{sub}, ['source_' label '_' regressorName], ...
+                    'smoothed_condition_mmn.nii,1'));
+            end
         end
 
         % create and run the job - one test per regressor
         job = compi_getjob_2ndlevel_onesample_ttest_cov(factorialDesignDir, scans, regressorName, covars);
-        
         spm_jobman('run', job);
 
     end

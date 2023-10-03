@@ -1,12 +1,9 @@
 function details = compi_get_subject_details(id, options)
 
-
 if ~ismember(id, options.subjects.all)
     error('Subject %s does not belong to any group %s. Please choose right options-struct.', ...
         id, options.eeg.part);
 end
-
-
 
 %% Paths and directories
 details.id = sprintf('COMPI_%s', id);
@@ -80,8 +77,7 @@ end
 switch options.eeg.preproc.eyeDetectionThreshold
     case 'subject-specific'
         switch id
-            case {'0054', '0059', '0069', '0070', ...
-                    '0106', '0118', '0125', '0129'}
+            case {'0106'}
                 details.eeg.preproc.eyeBlinkThreshold = 2.5;
             case {'0122'}
                 details.eeg.preproc.eyeBlinkThreshold = 2;
@@ -90,15 +86,38 @@ switch options.eeg.preproc.eyeDetectionThreshold
         end
 end
 
+switch options.eeg.preproc.eyeCorrType
+    case 'subject-specific'
+        switch id 
+            case {'0054', '0057', '0117', '0123', '0124', '0129',...
+                    '0063', '0102', '0136'}
+                details.eeg.preproc.eyeCorrMethod = 'pssp';
+            otherwise
+                details.eeg.preproc.eyeCorrMethod = options.eeg.preproc.eyeCorrMethod;
+        end
+end
+
+switch options.eeg.preproc.eyeComponentThreshold
+    case 'subject-specific'
+        switch id
+            case {'0051', '0063', '0067', '0102', '0119', '0125', '0134', '0136'}
+                details.eeg.preproc.nComponentsforRejection = 2;
+            case {'0068'}
+                details.eeg.preproc.nComponentsforRejection = 3;
+            otherwise
+                details.eeg.preproc.nComponentsforRejection = options.eeg.preproc.nComponentsforRejection;
+        end
+end
+
 details.eeg.preproc.artifact.badtrialthresh = options.eeg.preproc.badtrialthresh;
-details.eeg.preproc.nComponentsforRejection = options.eeg.preproc.nComponentsforRejection;
 
 details.eeg.preproot = fullfile(details.eeg.subjectroot.results, 'spm_preproc');
 details.eeg.trialStats  = fullfile(details.eeg.preproot, 'trial_stats');
 details.eeg.prepfilename = [id '_' details.eeg.sfxFilter];
 details.eeg.source.filename = fullfile(details.eeg.preproot, ['B' id '_' details.eeg.sfxFilter '.mat']);
-details.eeg.tf.filename = fullfile(details.eeg.preproot, ['rtf_' id '_' details.eeg.sfxFilter '.mat']);
-details.eeg.source.tf.filename = fullfile(details.eeg.preproot, ['rtf_B' id '_' details.eeg.sfxFilter '.mat']);
+
+
+
 details.eeg.source.beamforming.dirname = fullfile(details.eeg.preproot, 'BF_msp');
 details.eeg.source.beamforming.file = fullfile(details.eeg.source.beamforming.dirname, 'BF.mat');
 details.eeg.source.savefilename = fullfile(details.eeg.preproot, ['B' id '_' details.eeg.sfxFilter '.mat']);

@@ -13,7 +13,7 @@ for iSub = 1: length(options.subjects.all)
     subID = char(options.subjects.all{iSub});
     details = compi_get_subject_details(subID, options);
 
-    load(details.files.behav_measures{1}, 'behav_measures');
+    load(details.files.behav_eeg, 'behav_measures');
 
     if iSub == 1
         behav_all = [behav_measures];

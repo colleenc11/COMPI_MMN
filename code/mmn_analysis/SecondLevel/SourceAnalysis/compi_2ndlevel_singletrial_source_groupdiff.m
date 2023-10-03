@@ -88,7 +88,7 @@ catch
             end
         
             % get covaiates for both groups
-            if options.eeg.covars
+            if options.eeg.covar.include
                 covars = compi_get_covariates(options, options.subjects.all);
             else
                 covars = {};

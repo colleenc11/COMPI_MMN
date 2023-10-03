@@ -1,9 +1,9 @@
 function [] = tayeeg_report_spm_results( options, flag )
 %--------------------------------------------------------------------------
-% TAYEEG_REPORT_SPM_RESULTS
+% COMPI_REPORT_SPM_RESULTS
 %   IN:     options - the struct that holds all analysis options
-%           flag    - string indicating either the condition ('placebo',
-%           'ketamine') or 'drugdiff'
+%           flag    - string indicating either the condition ('control',
+%           'CHR') or 'groupdiff'
 %   OUT:    --
 %--------------------------------------------------------------------------
 
@@ -39,11 +39,11 @@ switch options.condition
                         regressorNames{1});
             case 'ERP'
                 spmRoot = fullfile(options.roots.erp, options.condition, ...
-                         regressorNames{1}, 'SPM', 'diffwave');
+                         regressorNames{1}, 'SPM', 'stableMMN');
         end
         pngFiles = fullfile(spmRoot, regressorNames{1}, 'scalpmaps_*.png');
         contrastTitle = 'Effect of ';
-        contrastIdx = 3;
+        contrastIdx = 5;
         nVoxMin = 1;
     case 'groupdiff'
         switch options.eeg.stats.mode
@@ -107,7 +107,7 @@ catch
                             regressorNames{iReg}, 'SPM');
                 else
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressorNames{iReg}, 'SPM', 'diffwave');
+                            regressorNames{iReg}, 'SPM', 'stableMMN');
                 end
         end
 

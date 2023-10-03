@@ -42,13 +42,24 @@ catch
     % NOTE: all COMPI subjects received same tone sequence
     tones = getfield(load(fullfile(options.roots.config,  'tones.mat')), 'tones');
   
-    design = compi_volatilityMMN_extract_beliefs_eHGF(tones);
+    [design, bopars] = compi_volatilityMMN_extract_beliefs_eHGF(tones);
     
+    save(fullfile(details.dirs.preproc, ['bopars.mat']),'bopars','-mat');
     savefig(fullfile(details.dirs.preproc, ['COMPI_' id '_regressor_traj']));
     close;
 
     %-- modify design file -----------------------------------------------%
-    % INSERT SPECIAL CASE SUBJECTS HERE
+    % add phase regressor to design matrix
+    long_stable = zeros(1, 300);
+    short_volatile = ones(1, 50);
+    short_stable = zeros(1, 90);
+    long_volatile = ones(1, 460);
+    short_stable2 = zeros(1, 100);
+    long_volatile2 = ones(1, 450);
+
+    phase_reg = [long_stable, short_volatile, short_stable, long_volatile, long_stable, short_volatile, short_stable2, long_volatile2];
+
+    design.phase = phase_reg';
 
     save(fullfile(details.dirs.preproc, ['design.mat']),'design','-mat');
 

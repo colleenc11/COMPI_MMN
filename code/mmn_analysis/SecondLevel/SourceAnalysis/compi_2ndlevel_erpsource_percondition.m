@@ -1,12 +1,14 @@
 function compi_2ndlevel_erpsource_percondition(options)
-%COMPI_2NDLEVEL_ERPSTATS_PERCONDITION Computes the second level contrast
-%images for high and low ERP effects in one condition in the MNCHR study.
+%--------------------------------------------------------------------------
+% COMPI_2NDLEVEL_ERPSOURCE_PERCONDITION Computes the second level contrast
+% images for oddball source effects in one condition in the COMPI study.
 %   IN:     options - the struct that holds all analysis options
 %   OUT:    --
+%--------------------------------------------------------------------------
 
 % general analysis options
 if nargin < 1
-    options = mnCHR_set_analysis_options;
+    options = compi_mmn_options;
 end
 
 %% Main
@@ -14,17 +16,16 @@ end
 % record what we're doing
 diary(fullfile(options.roots.log, sprintf('secondlevel_erpsource_%s')));
 
-%%% TO FIX %%%
 try
     % check for previous statistics
     spmFile = fullfile(options.roots.results_source, options.condition, ...
-        options.eeg.erp.regressors{1}, options.eeg.source.exampleLabel, 'SPM.mat');
+        options.eeg.stats.regressors{1}, options.eeg.source.exampleLabel, 'SPM.mat');
     load(spmFile);
     disp(['Group stats for difference waves of ' factorNames{end} ...
         ' ERPs have been computed before.']);
     if options.eeg.source.overwrite
         delete(fullfile(options.roots.results_source, options.condition, ...
-            options.eeg.erp.regressors{1}, options.eeg.source.exampleLabel, 'SPM.mat'));
+            options.eeg.stats.regressors{1}, options.eeg.source.exampleLabel, 'SPM.mat'));
         disp('Overwriting...');
         error('Continue to 2nd level stats step');
     else
@@ -34,7 +35,7 @@ catch
 
     disp(['Computing 2nd level source stats for regressors for ' ...
         options.condition ' condition in the ' ...
-        options.eeg.erp.type ' design...']);
+        options.eeg.type ' design...']);
     
     scndlvlroot = fullfile(options.roots.results_source, options.condition);
     if ~exist(scndlvlroot, 'dir')
@@ -46,7 +47,7 @@ catch
     % indicate the subject-specific directory of the beta images
 
     for i_group = 1: numel(options.subjects.group_labels)
-        if strcmp(options.subjects.group_labels{i_group}, options.condition)
+        if strncmp(options.subjects.group_labels{i_group}, options.condition, 2)
             
             nSubjects = numel(options.subjects.IDs{i_group});
             imagePaths = cell(nSubjects, 1);
@@ -57,8 +58,9 @@ catch
             end
 
             % get group covariate information
-            if options.eeg.covars
-                covars = compi_get_covariates(options, options.subjects.IDs{i_group});
+            if options.eeg.covar.include
+                covars = compi_get_covariates(options.eeg.covar.covariate_names, ...
+                        options.subjects.IDs{i_group}, options);
             else
                 covars = {};
             end
@@ -72,7 +74,7 @@ catch
     
     disp(['Computed 2nd-level statistics for regressors for ' ...
         options.condition ' condition in the ' ...
-        options.eeg.erp.type  ' design...']);
+        options.eeg.type  ' design...']);
 
 end
 

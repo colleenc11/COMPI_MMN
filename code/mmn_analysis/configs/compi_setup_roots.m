@@ -39,6 +39,9 @@ options.roots.results_hgf = fullfile(options.roots.analysis,'results_hgf');
 % HGF sub-folder root
 options.roots.results_source = fullfile(options.roots.analysis,'results_source');
 
+% Paper figures root
+options.roots.paper_fig = fullfile(options.roots.results,'paper_figs');
+
 %% Create folders
 % Result folders
 mkdir(options.roots.subjects);
@@ -50,5 +53,6 @@ mkdir(options.roots.analysis);
 mkdir(options.roots.erp);
 mkdir(options.roots.results_hgf);
 mkdir(options.roots.results_source);
+mkdir(options.roots.paper_fig);
 
 return

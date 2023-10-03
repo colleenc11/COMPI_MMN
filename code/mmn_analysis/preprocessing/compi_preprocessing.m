@@ -117,7 +117,7 @@ catch
     %-- eyeblink rejection -----------------------------------------------%
     trialdefForReject.labels = {trialdef.conditionlabel};
     trialdefForReject.values = {trialdef.eventvalue};
-    switch lower(options.eeg.preproc.eyeCorrMethod)
+    switch lower(details.eeg.preproc.eyeCorrMethod)
         case 'reject'
             [D, ~, ebstats.nExcluded, ebstats.idxExcluded, ebstats.nTrials, fh] = ...
                 tnueeg_eyeblink_rejection_on_continuous_eeg(Dm, trialdefForReject, options);
@@ -150,7 +150,7 @@ catch
 
 
     %-- eye blink detection based on eye channels ------------------------%
-    switch lower(options.eeg.preproc.eyeCorrMethod)
+    switch lower(details.eeg.preproc.eyeCorrMethod)
         case {'berg', 'ssp','pssp'}
             S = [];
             S.D = Dm;
@@ -173,7 +173,7 @@ catch
     %-- eye blink correction & headmodel ---------------------------------%
     fid = details.eeg.fid;
 
-    switch lower(options.eeg.preproc.eyeCorrMethod)
+    switch lower(details.eeg.preproc.eyeCorrMethod)
         case 'reject'
             %-- headmodel ------------------------------------------------%
             hmJob = dmpad_headmodel_job(De, fid, details, options);
@@ -187,7 +187,7 @@ catch
             D = reload(De);
             
             % Get spatial confounds from EB epochs
-            switch lower(options.eeg.preproc.eyeCorrMethod)
+            switch lower(details.eeg.preproc.eyeCorrMethod)
                 case 'pssp'
                     % Remove wrong eyeblink trials before computing confound
                     % components
@@ -228,7 +228,6 @@ catch
             saveas(gcf, fullfile(options.roots.diag_eeg, 'EB_confounds', ...
                 [id '_EB_confounds']),'png');
             
-            
             % add spatial confounds to condition epochs
             badChan = badchannels(Da1);
             if ~isempty(badChan)
@@ -250,7 +249,7 @@ catch
             % correct eyeblinks
             S = [];
             S.D = D;
-            S.correction = options.eeg.preproc.eyeCorrMethod;
+            S.correction = details.eeg.preproc.eyeCorrMethod;
             D = spm_eeg_correct_sensor_data(S);
             save(D);
             

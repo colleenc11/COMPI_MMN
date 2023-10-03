@@ -4,15 +4,15 @@ function compi_ignore_reject_trials(id, options)
 % artefacts from design matrix.
 %
 % IN
-%   id          subject id string, only number (e.g. '153')
-%   options     general analysis options%
-%               options = compi_set_analysis_options;
+%   id          subject id string, only number (e.g. '0101')
+%   options     general analysis options as set in compi_mmn_options();
 % ------------------------------------------------------------------------- 
 
-% paths and files
-details = compi_get_subject_details(id, options); % subject-specific information
+%% paths and files
+details = compi_get_subject_details(id, options);
 
-switch lower(options.eeg.preproc.eyeCorrMethod)
+%% remove rejected / bad trials
+switch lower(details.eeg.preproc.eyeCorrMethod)
     % first, remove rejected trials due to eyeblinks
     case 'reject'
         ebstats = getfield(load(details.eeg.eyeblinkrejectstats), 'ebstats');
@@ -29,7 +29,12 @@ end
 badtrials = get_bad_trials(details);
 remove_bad_trials(badtrials, options, details);
 
+% save pruned design
+save(fullfile(details.dirs.preproc, 'design_Pruned.mat'), 'design');
+
 end
+
+%% helper functions
 
 function bt = get_bad_trials(details)
 D = spm_eeg_load(details.eeg.prepfile);
@@ -76,6 +81,4 @@ for i = 1: numel(fns)
     design.(fn)(bt) = [];
 end
 
-% save pruned design
-save(fullfile(details.dirs.preproc, 'design_Pruned.mat'), 'design');
 end

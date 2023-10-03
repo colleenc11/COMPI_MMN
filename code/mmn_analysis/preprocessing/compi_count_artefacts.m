@@ -1,4 +1,4 @@
-function [] = compi_count_artefacts( D, details)
+function compi_count_artefacts(D, details)
 % ------------------------------------------------------------------------- 
 % COMPI_COUNT_ARTEFACTS Counts bad trials in an EEG data set
 %   This function counts the number of bad trials in a preprocessed EEG
@@ -7,7 +7,7 @@ function [] = compi_count_artefacts( D, details)
 %   IN:     D               - EEG data set after artefact rejection
 %           details         - the struct that holds all paths and filenames
 %   OUT:    numArtefacts    - number of bad trials in D
-%           badChannels     - struct with number and names of bad channels in D
+%           badChannels     - struct with number and names of bad chan in D
 % ------------------------------------------------------------------------- 
 
 idxArtefacts = badtrials(D);

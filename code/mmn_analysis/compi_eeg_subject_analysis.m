@@ -12,7 +12,6 @@ disp(options.eeg.pipe.executeStepsPerSubject);
 fprintf('\n\n===\n\n');
 pause(2);
 
-doCleanupSubject        = ismember('cleanup', options.eeg.pipe.executeStepsPerSubject);
 doCreateRegressors      = ismember('create_behav_regressors', options.eeg.pipe.executeStepsPerSubject);  
 doCorrectEyeBlinks      = ismember('correct_eyeblinks', options.eeg.pipe.executeStepsPerSubject);
 doIgnoreRejectTrials    = ismember('ignore_reject_trials', options.eeg.pipe.executeStepsPerSubject);
@@ -20,12 +19,7 @@ doRegressorERP          = ismember('run_regressor_erp', options.eeg.pipe.execute
 doRunStatsSensor        = ismember('run_stats_sensor', options.eeg.pipe.executeStepsPerSubject);
 doRunSources            = ismember('extract_sources', options.eeg.pipe.executeStepsPerSubject);
 doRunStatsSource        = ismember('run_stats_source', options.eeg.pipe.executeStepsPerSubject);
-doComputeBetaWave       = ismember('compute_beta_wave', options.eeg.pipe.executeStepsPerSubject);
-
-% Deletes previous preproc/stats files of analysis specified in options
-if doCleanupSubject
-    compi_cleanup_eeg_subject(id, options)
-end
+doRunERPSources         = ismember('run_erp_source', options.eeg.pipe.executeStepsPerSubject);
 
 % Creates regressors from behavioral model
 if doCreateRegressors
@@ -47,10 +41,24 @@ end
 % ERP BASED ANALYSIS
 % -------------------------------------------------------------------------
 
-% Compute ERPs for model regressors (e.g. epsilons)
 if doRegressorERP
     fprintf('Running regressor ERP analysis for %s', id);
-    compi_erp(id, options);
+
+    % Compute ERPs for model regressors (e.g. epsilons)
+    for i_reg = 1:length(options.eeg.stats.design_types)
+        design = options.eeg.stats.design_types{i_reg};
+        options = compi_get_design_regressors(design, options);
+
+        compi_erp(id, options);
+    end
+
+    % Compute ERPs for oddball waveform
+    for i_reg = 1:length(options.eeg.erp.design_types)
+        design = options.eeg.erp.design_types{i_reg};
+        options = compi_get_design_regressors(design, options);
+
+        compi_erp(id, options);
+    end
 end
 
 % Extract sources based on MIP or fMRI priors for oddball waveform
@@ -58,7 +66,14 @@ if doRunERPSources
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Extracting source waveforms for %s', id);
-    compi_source_erp(id, options, options.eeg.source.doVisualize)
+    
+    for i_reg = 1:length(options.eeg.erp.design_types)
+        design = options.eeg.erp.design_types{i_reg};
+        options = compi_get_design_regressors(design, options);
+
+        compi_source_erp(id, options, options.eeg.source.doVisualize)
+    end
+
     options.eeg.type = tmpType;
 end
 
@@ -70,17 +85,16 @@ end
 % Based on design matrix, include regressors in one or seperate design
 if doRunStatsSensor
     fprintf('Running GLM for %s (Sensor space)', id);
-    if options.eeg.stats.regDesignSplit
-        for i = 1: (numel(options.eeg.stats.regressors)) 
-            factor = {options.eeg.stats.regressors{i}};
-            compi_stats_adaptable_single_reg(id, factor, options);
-        end
-    else
+
+    for i_reg = 1:length(options.eeg.stats.design_types)
+        design = options.eeg.stats.design_types{i_reg};
+        options = compi_get_design_regressors(design, options);
+
         compi_stats_adaptable(id, options);
     end
 end
 
-% Extract sources based on fMRI priors
+% Extract sources based on specified priors
 if doRunSources
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
@@ -94,22 +108,15 @@ if doRunStatsSource
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Running GLM for %s (Source space)', id);
-    if options.eeg.stats.regDesignSplit
-        for i = 1: (numel(options.eeg.stats.regressors)) 
-            factor = {options.eeg.stats.regressors{i}};
-            compi_stats_adaptable_single_reg(id, factor, options);
-        end
-    else
+
+    for i_reg = 1:length(options.eeg.stats.design_types)
+        design = options.eeg.stats.design_types{i_reg};
+        options = compi_get_design_regressors(design, options);
+
         compi_stats_adaptable(id, options);
     end
-    options.eeg.type = tmpType;
-    options.eeg.stats.firstLevelAnalysisWindow = [100 450];
-end
 
-% Compute Beta Waveform
-if doComputeBetaWave
-    fprintf('Running Beta Wave computation for %s', id);
-    dmpad_contrast(id, options);
+    options.eeg.type = tmpType;
 end
 
 close all

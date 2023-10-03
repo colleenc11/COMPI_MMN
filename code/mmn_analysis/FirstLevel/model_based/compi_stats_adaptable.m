@@ -1,14 +1,16 @@
 function compi_stats_adaptable(id, options)
-% as dmpad_stats, but does not convert/smooth trials into images again,
-% if files exist
+% -------------------------------------------------------------------------
+% COMPI_STATS_ADAPTABLE Perform first-level GLM. It will convert / smooth
+% trials into images if the image file does not exist. 
 %
 % IN
-%   id          subject id string, only number (e.g. '153')
-%   options     general analysis options%
-%               options = dmpad_set_analysis_options;
+%   id          subject id string, only number (e.g. '0101')
+%   options     general analysis options
+%               options = compi_set_analysis_options;
 %
 % OUT
 %   D           Data structure of SPM EEG Analysis
+% -------------------------------------------------------------------------
 
 details = compi_get_subject_details(id, options); % subject-specific information
 type = options.eeg.type;
@@ -37,25 +39,12 @@ switch lower(type)
         pathImages  = details.eeg.firstLevel.source.pathImages;
         pathStats  = fullfile(details.eeg.firstLevel.source.pathStats, options.eeg.stats.design);
         pfxImages = details.eeg.firstLevel.source.prefixImages;
-        analysisWindow = options.eeg.stats.firstLevelSourceAnalysisWindow;
+        analysisWindow = options.eeg.source.firstLevelAnalysisWindow;
         switch options.eeg.preproc.smoothing
             case 'yes'
                 fileImage   = details.eeg.conversion.source.smoofile;
             case 'no'
                 fileImage   = details.eeg.firstLevel.source.fileImage;
-        end
-        
-    case 'tfsource'
-        fileToLoad = details.eeg.source.tf.filename;
-        stringRerunFunction = 'dmpad_tf';
-        pathImages  = details.eeg.firstLevel.tf.pathImages;
-        pathStats  = details.eeg.firstLevel.tf.pathStats;
-        pfxImages = details.eeg.firstLevel.tf.prefixImages;
-        switch options.eeg.preproc.smoothing
-            case 'yes'
-                fileImage   = details.eeg.conversion.tf.smoofile;
-            case 'no'
-                fileImage   = details.eeg.firstLevel.tf.fileImage;
         end
 end
 
@@ -138,65 +127,40 @@ job{iJobFcon}.spm.stats.con.spmmat(1) = cfg_dep('Model estimation: SPM.mat File'
 %% Change analysis type in function
 switch type
     case 'sensor'
-        
-        %% Set up converted Image input file dependencies for GLM
+        % Set up converted Image input file dependencies for GLM
         if ~hasConvertedImages
-            % convert2Images First
-            
-            %% image conversion job
+            % image conversion job
             job{1}.spm.meeg.images.convert2images.mode = 'scalp x time';
             job{1}.spm.meeg.images.convert2images.channels{1}.type = 'EEG';
             job{1}.spm.meeg.images.convert2images.prefix = details.eeg.firstLevel.sensor.prefixImages;
         end
         
-        
-        
     case 'source'
-        
         % images are always converted...
         D = copy(D, spm_file(fullfile(D), 'prefix', 'abs'));
         chan = D.indchantype('LFP');
         D(chan, :, :) = abs(D(chan, :, :));
-        
         job{1}.spm.meeg.images.convert2images.mode = 'time';
-        
-    case 'tfsource'
-        
-        % images are always converted...
-        chan = D.indchantype('EEG');
-        job{1}.spm.meeg.images.convert2images.mode = 'time x frequency';
+
 end
 
 
 %% F - contrast creation job
 job{iJobFcon}.spm.stats.con.delete = 1;
 
-isTimeFreqSource = contains(lower(type), 'tfsource');
-
 for i = 1:numel(factors)
-    
-    isPE = ~isempty(strfind(factors{i}, 'PE'));
-    if isPE && isTimeFreqSource %% PE with t contrast
-        job{iJobFcon}.spm.stats.con.consess{i}.tcon.name    = factors{i};
-        job{iJobFcon}.spm.stats.con.consess{i}.tcon.weights = zeros(1, numel(factors)+1);
-        job{iJobFcon}.spm.stats.con.consess{i}.tcon.weights(i+1) = 1;
-        job{iJobFcon}.spm.stats.con.consess{i}.tcon.sessrep = 'none';
-    else % all other quantities with F-contrast
-        job{iJobFcon}.spm.stats.con.consess{i}.fcon.name    = factors{i};
-        job{iJobFcon}.spm.stats.con.consess{i}.fcon.weights = zeros(1, numel(factors)+1);
-        job{iJobFcon}.spm.stats.con.consess{i}.fcon.weights(i+1) = 1;
-%         job{iJobFcon}.spm.stats.con.consess{i}.fcon.weights(end-1) = 1;
-        job{iJobFcon}.spm.stats.con.consess{i}.fcon.sessrep = 'none';
-    end
+    % all other quantities with F-contrast
+    job{iJobFcon}.spm.stats.con.consess{i}.fcon.name    = factors{i};
+    job{iJobFcon}.spm.stats.con.consess{i}.fcon.weights = zeros(1, numel(factors)+1);
+    job{iJobFcon}.spm.stats.con.consess{i}.fcon.weights(i+1) = 1;
+    job{iJobFcon}.spm.stats.con.consess{i}.fcon.sessrep = 'none';
 end
 
-
 %% use dependencies for all other submodules of batch
-
 job{iJobFcon + 1} = dmpad_get_job_contrast_manager(iJobFcon, type);
 
 [~,~] = mkdir(pathImages);
-fprintf('Trying to run job of dmpad_stats_adaptable\n');
+fprintf('Trying to run job of compi_stats_adaptable\n');
 
 switch type
     case 'sensor'
@@ -213,7 +177,7 @@ switch type
         dmpad_save_subject_batch(job, details.eeg.log.batches.statsfile);
         
         spm_jobman('run', job);
-    case {'source', 'tfsource'}
+    case {'source'}
         for i = 1:length(chan)
             stringChannel = char(D.chanlabels(chan(i)));
             pathSpmChannel = fullfile(pathStats, stringChannel);
