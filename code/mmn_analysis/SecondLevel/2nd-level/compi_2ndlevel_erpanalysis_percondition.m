@@ -58,14 +58,14 @@ catch
         
         % compute the grand averages and variance estimates for selected electrodes
         % and plot it right away
-        for iCh = 1: numel(options.eeg.erp.channels)
-            channel = char(options.eeg.erp.channels{iCh});
-            ga = compi_grandmean_with_error(erpfiles, channel, factorNames{i_reg}, 1);
-            save(fullfile(GAroot, [channel, '_ga']), 'ga');
-
-            compi_grandmean_plot(ga, channel, factorNames{i_reg}, options);
-        end
-        close all;
+        % for iCh = 1: numel(options.eeg.erp.channels)
+        %     channel = char(options.eeg.erp.channels{iCh});
+        %     ga = compi_grandmean_with_error(erpfiles, channel, factorNames{i_reg}, 1);
+        %     save(fullfile(GAroot, [channel, '_ga']), 'ga');
+        % 
+        %     compi_grandmean_plot(ga, channel, factorNames{i_reg}, options);
+        % end
+        % close all;
         
         % compute the grand averages for all electrodes using SPM
         outFile = fullfile(GAroot, ['GA_' factorNames{i_reg}]);

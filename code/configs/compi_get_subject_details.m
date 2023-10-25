@@ -19,7 +19,6 @@ details.dirs.raw_behav      = fullfile(options.roots.data, 'mmn', details.id, 'b
 % Result directories
 %------------------------
 details.dirs.results_eeg    = fullfile(options.roots.subjects, details.id);
-details.dirs.results_behav  = fullfile(options.roots.subjects, details.id, 'behav');
 details.dirs.results_hgf    = fullfile(options.roots.subjects, details.id, 'hgf');
 details.dirs.preproc        = fullfile(options.roots.subjects, details.id, 'spm_preproc');
 
@@ -32,15 +31,11 @@ details.files.behav_eeg     = fullfile(details.dirs.raw_behav, [details.id '_MMN
 % EEG data files
 details.files.eeg           = fullfile(details.dirs.raw_eeg, [details.id '.bdf']);
 
-% Behavioral measures
-details.files.behav_measures_eeg = fullfile(details.dirs.results_behav, ...
-    [details.id '_' 'eeg_behav.mat']);
-
 
 % Collect files depending on currently chosen modality
-details.files.behav{1} = details.files.behav_eeg;                       % raw behavioral file
+% details.files.behav{1} = details.files.behav_eeg;                       % raw behavioral file
 % details.files.hgf_data{1} = details.files.hgf_data_eeg;                 % hgf data file
-details.files.behav_measures{1} = details.files.behav_measures_eeg;     % behavioral summary file
+% details.files.behav_measures{1} = details.files.behav_measures_eeg;     % behavioral summary file
 
 
 %% EEG details
@@ -174,9 +169,9 @@ details.eeg.regressorfigure   = fullfile(details.eeg.preproot, ...
     [details.eeg.subproname '_regressor_traj.fig']);
 
 % Designs
-details.eeg.firstLevelDesignFileInit = fullfile(options.roots.results_behav, [options.eeg.stats.design '.mat']);
-details.eeg.firstLevelDesignFileEBPruned = fullfile(options.roots.results_behav, [options.eeg.stats.design '_EBpruned.mat']);
-details.eeg.firstLevelDesignFilePruned = fullfile(options.roots.results_behav, [options.eeg.stats.design '_Pruned.mat']);
+details.eeg.firstLevelDesignFileInit = fullfile(options.roots.behav, [options.eeg.stats.design '.mat']);
+details.eeg.firstLevelDesignFileEBPruned = fullfile(options.roots.behav, [options.eeg.stats.design '_EBpruned.mat']);
+details.eeg.firstLevelDesignFilePruned = fullfile(options.roots.behav, [options.eeg.stats.design '_Pruned.mat']);
 
 if options.eeg.stats.designPruned
     details.eeg.firstLevelDesignFile = details.eeg.firstLevelDesignFilePruned;

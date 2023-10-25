@@ -18,13 +18,13 @@ diary(fullfile(options.roots.log, sprintf('secondlevel_erpsource_%s')));
 
 try
     % check for previous statistics
-    spmFile = fullfile(options.roots.results_source, options.condition, ...
+    spmFile = fullfile(options.roots.source, options.condition, ...
         options.eeg.stats.regressors{1}, options.eeg.source.exampleLabel, 'SPM.mat');
     load(spmFile);
     disp(['Group stats for difference waves of ' factorNames{end} ...
         ' ERPs have been computed before.']);
     if options.eeg.source.overwrite
-        delete(fullfile(options.roots.results_source, options.condition, ...
+        delete(fullfile(options.roots.source, options.condition, ...
             options.eeg.stats.regressors{1}, options.eeg.source.exampleLabel, 'SPM.mat'));
         disp('Overwriting...');
         error('Continue to 2nd level stats step');
@@ -37,7 +37,7 @@ catch
         options.condition ' condition in the ' ...
         options.eeg.type ' design...']);
     
-    scndlvlroot = fullfile(options.roots.results_source, options.condition);
+    scndlvlroot = fullfile(options.roots.source, options.condition);
     if ~exist(scndlvlroot, 'dir')
         mkdir(scndlvlroot);
     end

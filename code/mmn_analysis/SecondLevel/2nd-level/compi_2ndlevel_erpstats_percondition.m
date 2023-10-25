@@ -60,10 +60,7 @@ catch
                     subID = char(options.subjects.IDs{i_group}{sub});
                     details = compi_get_subject_details(subID, options);
 
-                    imagePaths{sub, 1} = fullfile(details.eeg.erp.root, ...
-                        'oddball_phases', ['sensor_diff_volatile_oddball_phases']); 
-                    % imagePaths{sub, 1} = fullfile(details.eeg.erp.root, ...
-                    %     factorNames{i_reg}, ['sensor_diff_' factorNames{i_reg}]);                    
+                    imagePaths{sub, 1} = fullfile(details.eeg.erp.root);               
                 end
                 
                 % get group covariate information

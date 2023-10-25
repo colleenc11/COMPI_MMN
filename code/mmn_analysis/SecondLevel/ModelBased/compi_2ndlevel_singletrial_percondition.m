@@ -16,15 +16,15 @@ try
     % check for previous statistics
     switch options.eeg.type
         case 'sensor'
-            spmFile = fullfile(options.roots.model, options.condition, ...
+            spmFile = fullfile(options.roots.hgf, options.condition, ...
                 options.eeg.stats.regressors{1}, 'SPM.mat');
-            resultsRoot = fullfile(options.roots.results_hgf, options.condition);
+            resultsRoot = fullfile(options.roots.hgf, options.condition);
             overwrite = options.eeg.stats.overwrite;
         
         case 'source'
-            spmFile = fullfile(options.roots.results_source, options.condition, ...
+            spmFile = fullfile(options.roots.source, options.condition, ...
                 options.eeg.stats.regressors{1}, options.eeg.source.exampleLabel, 'SPM.mat');
-            resultsRoot = fullfile(options.roots.results_source, options.condition, ...
+            resultsRoot = fullfile(options.roots.source, options.condition, ...
                 options.eeg.stats.regressors{1});
             overwrite = options.eeg.source.overwrite;
     end
@@ -49,9 +49,9 @@ catch
     % create output directory
     switch options.eeg.type
         case 'sensor'
-            scndlvlroot = fullfile(options.roots.results_hgf, options.condition, options.eeg.stats.design);
+            scndlvlroot = fullfile(options.roots.hgf, options.condition, options.eeg.stats.design);
         case 'source'
-            scndlvlroot = fullfile(options.roots.results_source, options.condition);
+            scndlvlroot = fullfile(options.roots.source, options.condition);
     end
 
     if ~exist(scndlvlroot, 'dir')

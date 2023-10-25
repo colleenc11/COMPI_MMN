@@ -1,7 +1,7 @@
 function D = compi_preprocessing(id, options)
 % -------------------------------------------------------------------------
 % Performs data preprocessing for one subject of the COMPI study (up until 
-% artefact rejection)
+% artefact rejection).
 %
 %   IN:     id          subject identifier string, e.g. '0001'
 %           options     as set by compi_set_analysis_options();
@@ -14,7 +14,7 @@ details = compi_get_subject_details(id, options);
 
 % record what we're doing
 diary(details.eeg.logfile);
-tnueeg_display_analysis_step_header('preprocessing_ssp', 'compi', id, options.eeg.preproc);
+tnueeg_display_analysis_step_header('preprocessing', 'compi', id, options.eeg.preproc);
 
 % general analysis options
 keep   = options.eeg.preproc.keep;
@@ -47,16 +47,29 @@ catch
     D = compi_eeg_convert(details.files.eeg);
     fprintf('\nConversion done.\n\n');
 
-    % Start trigger and deviant represented by value of 1. Changing start 
-    % trigger value to 4 so this won't be used for epoching later.
+    % Note: In this dataset, the start trigger and deviant tone are 
+    % initially represented by the value of 1. The start trigger is 
+    % followed by the trigger 4, and the tone paradigm starts with the 
+    % trigger 2. To avoid any issues with epoching later, we change the 
+    % start trigger value to 4. We assume that the start trigger is within 
+    % the first few events.
+
+    % Get the events from the EEG data structure
     ev = D.events;
-    for i = 1:6 % assume start trigger in first few events
-        if ev(i).value == 1 & ev(i+1).value == 2
-            ev(i).value = 4;
-            disp('Changed event value of start trigger.');
-            break
+
+    for i_ev = 1:5
+        % Check if the event value is not empty and equals 4
+        if ~isempty(ev(i_ev).value) && ev(i_ev).value == 4 && ev(i_ev+1).value == 1 && ev(i_ev+2).value == 2
+            % Change the event value of the start trigger to 4
+            ev(i_ev+1).value = 4;
+            disp('Changed event value of the start trigger.');
+            break; % Exit the loop if the condition is met
+        elseif i_ev == 5
+            error('Start trigger not found in the data. Please check the trigger sequence.');
         end
     end
+
+    % Update the events in the EEG data structure
     D = events(D, 1, ev);
 
     % Project / interpolate channel TP7 for affected subjects
@@ -123,8 +136,7 @@ catch
                 tnueeg_eyeblink_rejection_on_continuous_eeg(Dm, trialdefForReject, options);
 
             saveas(fh, details.eeg.eyeblinkoverlapfigure{f}, 'fig');
-            close(fh);
-            
+            close(fh);            
     end
 
     save(details.eeg.eyeblinkrejectstats, 'ebstats');
@@ -176,13 +188,13 @@ catch
     switch lower(details.eeg.preproc.eyeCorrMethod)
         case 'reject'
             %-- headmodel ------------------------------------------------%
-            hmJob = dmpad_headmodel_job(De, fid, details, options);
+            hmJob = compi_headmodel_job(De, fid, details, options);
             spm_jobman('run', hmJob);
             D = reload(De);
             
         case {'berg', 'ssp','pssp'}
             %-- headmodel ------------------------------------------------%
-            hmJob = dmpad_headmodel_job(De, fid, details, options);
+            hmJob = compi_headmodel_job(De, fid, details, options);
             spm_jobman('run', hmJob);            
             D = reload(De);
             
@@ -195,20 +207,36 @@ catch
                         filterOptions.eeg.preproc.lowpassfreq = options.eeg.preproc.artifact.lowPassFilter;
                         filterOptions.eeg.preproc.keep = 1;
                         DaF = tnueeg_filter(Da, 'low', filterOptions);
-                        DaNew = dmpad_reject_eyeblink_artefacts_for_eyeblink_correction(...
+                        DaNew = compi_reject_eyeblink_artefacts_for_eyeblink_correction(...
                             DaF, options);
                     else
-                        DaNew = dmpad_reject_eyeblink_artefacts_for_eyeblink_correction(...
+                        DaNew = compi_reject_eyeblink_artefacts_for_eyeblink_correction(...
                             Da, options);
                     end
                     if isfield(details.eeg.preproc.artifact, 'channelLabelforRejection')
                         DaNew = badchannels(DaNew,details.eeg.preproc.artifact.channelLabelforRejection,1);
                     end
 
+                    % Compare old version of SVD analysis (using all 
+                    % trials) with current version of SVD analysis 
+                    % (using only good trials)
+                    doCompareSVD = options.eeg.preproc.eyeblinkCompareSVD;
+
                     % Compute spatial confounds based on artefacts
-                    Da1 = dmpad_get_spatial_confounds(DaNew, details, options);
+                    S = [];
+                    S.D = DaNew; 
+                    S.method = 'SVD';
+                    S.timewin = options.eeg.preproc.eyeblinkwin;
+                    S.ncomp = details.eeg.preproc.nComponentsforRejection;
+                    S.conditions = 'eyeblink';
+                    Da1 = compi_spm_eeg_spatial_confounds(S, doCompareSVD, details); 
                 
                 case {'berg', 'ssp'}
+                    % Compare old version of SVD analysis (using all 
+                    % trials) with current version of SVD analysis 
+                    % (using only good trials)
+                    doCompareSVD = options.eeg.preproc.eyeblinkCompareSVD;
+                    
                     % Compute spatial confounds based on artefacts
                     S = [];
                     S.D = Da;
@@ -216,7 +244,7 @@ catch
                     S.timewin = options.eeg.preproc.eyeblinkwin;
                     S.ncomp = details.eeg.preproc.nComponentsforRejection;
                     S.conditions = 'eyeblink';
-                    Da1 = spm_eeg_spatial_confounds(S);
+                    Da1 = compi_spm_eeg_spatial_confounds(S, doCompareSVD, details); 
             end
             
             % diagnostics: save EB components (confounds) figure
@@ -238,8 +266,7 @@ catch
             S.D = D;
             S.method = 'SPMEEG';
             S.conffile = fullfile(Da1);
-            D = spm_eeg_spatial_confounds(S);
-            
+            D = compi_spm_eeg_spatial_confounds(S);
             
             if ~keep, delete(Da1); end
             
@@ -267,5 +294,7 @@ catch
     D = copy(reload(D), details.eeg.prepfilename);
 
 end
+
+close all;
 
 end
