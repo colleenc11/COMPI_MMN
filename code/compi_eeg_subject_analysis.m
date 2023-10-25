@@ -22,6 +22,10 @@ doRunSources            = ismember('extract_sources', options.eeg.pipe.executeSt
 doRunStatsSource        = ismember('run_stats_source', options.eeg.pipe.executeStepsPerSubject);
 doRunERPSources         = ismember('run_erp_source', options.eeg.pipe.executeStepsPerSubject);
 
+%% ------------------------------------------------------------------------
+% PREPROCESSING
+% -------------------------------------------------------------------------
+
 % Creates regressors from behavioral model
 if doCreateRegressors
     compi_mmn_model(id, options);
@@ -62,21 +66,18 @@ if doRegressorERP
     end
 end
 
-% Extract sources based on MIP or fMRI priors for oddball waveform
+% Extract sources based on MIP priors for oddball waveform
 if doRunERPSources
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Extracting source waveforms for %s', id);
     
-    % for i_reg = 1:length(options.eeg.erp.design_types)
-    %     design = options.eeg.erp.design_types{i_reg};
-    %     options = compi_get_design_regressors(design, options);
-    % 
-    %     compi_source_erp(id, options, options.eeg.source.doVisualize);
-    % end
+    for i_reg = 1:length(options.eeg.erp.design_types)
+        design = options.eeg.erp.design_types{i_reg};
+        options = compi_get_design_regressors(design, options);
 
-    options.eeg.stats.design = 'delta1';
-    compi_source_erp(id, options, options.eeg.source.doVisualize);
+        compi_source_erp(id, options);
+    end
 
     options.eeg.type = tmpType;
 end
@@ -84,7 +85,6 @@ end
 %% ------------------------------------------------------------------------
 % MODEL BASED ANALYSIS
 % -------------------------------------------------------------------------
-
 % Image conversion and GLM in sensor space
 % Based on design matrix, include regressors in one or seperate design
 if doRunStatsSensor
@@ -103,7 +103,7 @@ if doRunSources
     tmpType = options.eeg.type;
     options.eeg.type = 'source';
     fprintf('Extracting source waveforms for %s', id);
-    compi_source(id, options, options.eeg.source.doVisualize)
+    compi_source(id, options)
     options.eeg.type = tmpType;
 end
 

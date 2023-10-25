@@ -28,7 +28,7 @@ switch factorName
     
     case {'oddball_stable', 'oddball_volatile'}
         for sub = 1: nSubjects
-            scans{sub, 1} = fullfile(imagePaths{sub, 1}, 'smoothed_condition_mmn.nii,1');
+            scans{sub, 1} = fullfile(imagePaths{sub, 1}, factorName, ['sensor_diff_' factorName], 'smoothed_condition_diff.nii,1');
         end
 
         job = compi_getjob_2ndlevel_onesample_ttest_cov(scndlvlroot, scans, factorName, covars);
@@ -39,7 +39,7 @@ switch factorName
     case 'oddball'
         % difference wave analysis (w/ covariates)
         for sub = 1: nSubjects
-            scans{sub, 1} = fullfile(imagePaths{sub}, 'smoothed_condition_mmn.nii,1');
+            scans{sub, 1} = fullfile(imagePaths{sub}, factorName, ['sensor_diff_' factorName], 'smoothed_condition_diff.nii,1');
         end
 
         scndlvlroot_diffwave = fullfile(scndlvlroot, 'diffwave');
@@ -53,8 +53,8 @@ switch factorName
             for i_group = 1: numel(options.subjects.group_labels) 
                 if strncmp(options.subjects.group_labels{i_group}, options.condition, 2)
                     for sub = 1: numel(options.subjects.IDs{i_group})
-                        pairs_phase(sub).scans{1, 1} = fullfile(imagePaths{sub, 1}, ['sensor_diff_' phase_cond{1}], 'smoothed_condition_mmn.nii,1');
-                        pairs_phase(sub).scans{2, 1} = fullfile(imagePaths{sub, 1}, ['sensor_diff_' phase_cond{2}], 'smoothed_condition_mmn.nii,1');
+                        pairs_phase(sub).scans{1, 1} = fullfile(imagePaths{sub, 1}, phase_cond{1}, ['sensor_diff_' phase_cond{1}], 'smoothed_condition_diff.nii,1');
+                        pairs_phase(sub).scans{2, 1} = fullfile(imagePaths{sub, 1}, phase_cond{2}, ['sensor_diff_' phase_cond{2}], 'smoothed_condition_diff.nii,1');
                     end
                 end
             end
@@ -67,7 +67,7 @@ switch factorName
 
     otherwise
         for sub = 1: nSubjects
-            scans{sub, 1} = fullfile(imagePaths{sub}, 'smoothed_condition_mmn.nii,1');
+            scans{sub, 1} = fullfile(imagePaths{sub}, factorName, ['sensor_diff_' factorName], 'smoothed_condition_diff.nii,1');
         end
 
         job = compi_getjob_2ndlevel_onesample_ttest_cov(scndlvlroot, scans, factorName, covars);

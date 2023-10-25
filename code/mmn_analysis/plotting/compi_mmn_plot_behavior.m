@@ -5,16 +5,29 @@ function compi_mmn_plot_behavior(options)
 %   IN:     options     as set by compi_mmn_options();
 % -------------------------------------------------------------------------
 
+% Settings
+totalTrials     = 90; % total number of visual trials
+
+% Initialize result variables
+avgPerformance  = zeros(1, length(options.subjects.all));
+averageRT       = zeros(1, length(options.subjects.all));
+averageErrors   = zeros(1, length(options.subjects.all));
+averageMisses   = zeros(1, length(options.subjects.all));
+
+% Loop through each subject
 for iSub = 1:length(options.subjects.all)
     id = options.subjects.all{iSub};
 
+    % Get subject details
     details = compi_get_subject_details(id, options);
 
-    % load in behavioral data
+    % Load behavioral data
     load(details.files.behav_eeg);
 
-    [ ~, performance, meanRT, errors, misses ] = mmn_calculate_performance( MMN );
-    
+    % Calculate performance metrics
+    [ performance, meanRT, errors, misses ] = compi_calculate_performance( MMN );
+
+    % Store calculated metrics for each subject
     avgPerformance(iSub) = performance;
     averageRT(iSub) = meanRT;
     averageErrors(iSub) = errors;
@@ -23,14 +36,14 @@ for iSub = 1:length(options.subjects.all)
 end
 
 % Calculate Hit Rate
-avgHit = (90 - averageMisses);
-avgHitRate = avgHit / 90;
+avgHit = (totalTrials - averageMisses);
+avgHitRate = avgHit / totalTrials;
 avgHitRatePerc = avgHitRate*100;
 
 % Calculate Hit Rate Accuracy
 faults = averageMisses + averageErrors;
-avgCorrect = (90 - faults);
-percCorrect = avgCorrect / 90;
+avgCorrect = (totalTrials - faults);
+percCorrect = avgCorrect / totalTrials;
 
 % Write ouput table
 visual_task_behavTable = table(averageRT', avgHitRate', percCorrect', averageMisses', averageErrors', avgPerformance',...
@@ -39,7 +52,7 @@ visual_task_behavTable = table(averageRT', avgHitRate', percCorrect', averageMis
                         'averageMisses', 'averageErrors', 'avgPerformance'});
 
 % Save table
-save(fullfile(options.roots.results_behav, 'visual_task_behavTable.mat'),'visual_task_behavTable');
+save(fullfile(options.roots.behav, 'visual_task_behavTable.mat'),'visual_task_behavTable');
 
 % Plot Errors
 fh1 = figure;
@@ -53,7 +66,7 @@ set(e.semPtch,'FaceColor',[0.9 0.9 0.9]);
 set(gca,'FontName','Calibri','FontSize',40);
 ylabel('Number of Error');
 
-saveas(fh1, fullfile(options.roots.results_behav, 'behav_errors'), 'fig');
+saveas(fh1, fullfile(options.roots.behav, 'errors'), 'fig');
 
 % Plot Hit Rate
 fh2 = figure;
@@ -67,7 +80,7 @@ set(e.semPtch,'FaceColor',[0.9 0.9 0.9]);
 set(gca,'FontName','Calibri','FontSize',40);
 ylabel('Hit Rate (%)');
 
-saveas(fh2, fullfile(options.roots.results_behav, 'behav_hitRate'), 'fig');
+saveas(fh2, fullfile(options.roots.behav, 'hitRate'), 'fig');
 
 % Plot Mean RT
 fh3 = figure;
@@ -81,7 +94,7 @@ set(e.semPtch,'FaceColor',[0.9 0.9 0.9]);
 set(gca,'FontName','Calibri','FontSize',40);
 ylabel('RT (ms)');
 
-saveas(fh3, fullfile(options.roots.results_behav, 'behav_reactionTime'), 'fig');
+saveas(fh3, fullfile(options.roots.behav, 'reactionTime'), 'fig');
 
 close all;
 

@@ -27,7 +27,7 @@ end
 
 % now, remove other artefactual trials
 badtrials = get_bad_trials(details);
-remove_bad_trials(badtrials, options, details);
+design = remove_bad_trials(badtrials, options, details);
 
 % save pruned design
 save(fullfile(details.dirs.preproc, 'design_Pruned.mat'), 'design');
@@ -63,7 +63,7 @@ end
 save(details.eeg.firstLevelDesignFileEBPruned, 'design');
 end
 
-function remove_bad_trials(bt, options, details)
+function design = remove_bad_trials(bt, options, details)
 
 % get design matrix
 % if EB rejection, take the EBPruned, otherwise, the Init

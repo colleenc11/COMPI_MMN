@@ -21,7 +21,7 @@ fileDesignMatrix = fullfile(details.dirs.preproc, 'design_Pruned.mat');
 switch lower(type)
     case 'sensor'
         fileToLoad = details.eeg.prepfile;
-        stringRerunFunction = 'dmpad_preprocessing_eyeblink_correction';
+        stringRerunFunction = 'compi_preprocessing_eyeblink_correction';
         pathImages  = details.eeg.firstLevel.sensor.pathImages;
         pathStats   = fullfile(details.eeg.firstLevel.sensor.pathStats);
         analysisWindow = options.eeg.stats.firstLevelAnalysisWindow;
@@ -35,7 +35,7 @@ switch lower(type)
         
     case 'source'
         fileToLoad = details.eeg.source.filename;
-        stringRerunFunction = 'dmpad_source';
+        stringRerunFunction = 'compi_source';
         pathImages  = details.eeg.firstLevel.source.pathImages;
         pathStats  = fullfile(details.eeg.firstLevel.source.pathStats, options.eeg.stats.design);
         pfxImages = details.eeg.firstLevel.source.prefixImages;
@@ -157,7 +157,7 @@ for i = 1:numel(factors)
 end
 
 %% use dependencies for all other submodules of batch
-job{iJobFcon + 1} = dmpad_get_job_contrast_manager(iJobFcon, type);
+job{iJobFcon + 1} = compi_get_job_contrast_manager(iJobFcon, type);
 
 [~,~] = mkdir(pathImages);
 fprintf('Trying to run job of compi_stats_adaptable\n');
@@ -166,7 +166,7 @@ switch type
     case 'sensor'
         
         job{iJobFactorialDesign}.spm.stats.factorial_design.dir = {pathStats};
-        dmpad_save_subject_batch(job, details.eeg.log.batches.statsfile);
+        compi_save_subject_batch(job, details.eeg.log.batches.statsfile);
         
         if ~hasConvertedImages
             warning off
@@ -174,7 +174,7 @@ switch type
         end
         warning on
         
-        dmpad_save_subject_batch(job, details.eeg.log.batches.statsfile);
+        compi_save_subject_batch(job, details.eeg.log.batches.statsfile);
         
         spm_jobman('run', job);
     case {'source'}
@@ -191,7 +191,7 @@ switch type
             
             job{iJobFactorialDesign}.spm.stats.factorial_design.dir = {pathSpmChannel};
             
-            dmpad_save_subject_batch(job, ...
+            compi_save_subject_batch(job, ...
                 spm_file(details.eeg.log.batches.statsfile, 'suffix', ['_' stringChannel]));
             
             spm_jobman('run', job);

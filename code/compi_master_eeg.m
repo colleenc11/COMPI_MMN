@@ -24,9 +24,9 @@ options = compi_mmn_options([3 1 1 2 2 3 2 2 2 2]);
 
 %% Behavioral Analysis
 %  ------------------------------------------------------------------------
-%  First level: Behavioral Analysis and modeling
+%  Analysis of visual distraction task
 %  ------------------------------------------------------------------------
-fprintf('\n===\n\t Running the first level behavioral analysis:\n\n');
+fprintf('\n===\n\t Running behavioral analysis:\n\n');
 
 compi_mmn_plot_behavior(options);
 
@@ -105,13 +105,14 @@ for i_des = 1:length(options.eeg.erp.design_types)
 end
 
 %% ------------------------------------------------------------------------
-%  Second level: Second-Level Model Based Analysis with Covariates
+%  Second level: Model Based Analysis with GF Covariates
 %  Note: both sensor and source analysis being performed here.
 %  ------------------------------------------------------------------------
 fprintf('\n===\n\t Running second level model-based covariate analysis: \n\n');
 
-covariate_list = {'GF_role_T0', 'GF_social_T0'}; %'SocDem_age', 'SocDem_sex_binary'
-condition_list = {'HC_GFRole', 'HC_GFSocial'}; %'HC_age', 'HC_sex'
+% Main covariates
+covariate_list = {{'GF_role_T0'}, {'GF_social_T0'}};
+condition_list = {'HC_GFRole', 'HC_GFSocial'};
 
 % loop through covariates and GLM designs
 for i = 1:length(covariate_list)
@@ -137,16 +138,14 @@ for i = 1:length(covariate_list)
 end
 
 %% ------------------------------------------------------------------------
-%  Second level: ERP Based Analysis with Covariates
+%  Second level: ERP Based Analysis with GF Covariates
 %  Note: both sensor and source analysis being performed here.
 %  ------------------------------------------------------------------------
 fprintf('\n===\n\t Running second level ERP-based covariate analysis: \n\n');
 
-covariate_list = {'GF_role_T0', 'GF_social_T0'}; %'SocDem_age', 'SocDem_sex_binary',
-condition_list = {'HC_GFRole', 'HC_GFSocial'}; %'HC_age', 'HC_sex'
-
-covariate_list = {{'GF_role_T0', 'SocDem_cannabis_T0'}, {'GF_social_T0', 'SocDem_cannabis_T0'}}; %'SocDem_age', 'SocDem_sex_binary'
-condition_list = {'HC_GFRole_can', 'HC_GFSocial_can'}; %'HC_age', 'HC_sex'
+% Main covariates
+covariate_list = {{'GF_role_T0'}, {'GF_social_T0'}};
+condition_list = {'HC_GFRole', 'HC_GFSocial'};
 
 % loop through covariates and GLM designs
 for i = 1:length(covariate_list)
@@ -171,6 +170,66 @@ for i = 1:length(covariate_list)
     end
 end
 
+%% ------------------------------------------------------------------------
+%  Second level: Model & ERP Based Analysis with additional covariates
+%  Note: both sensor and source analysis being performed here.
+%  ------------------------------------------------------------------------
+fprintf('\n===\n\t Running second level model-based covariate analysis: \n\n');
+
+% Additional covariates
+covariate_list = ...
+   {{'SocDem_age'}, {'SocDem_cannabis_T0'}, {'DS_backward'}, ...                        % Age, Cannabis, Working Memory
+    {'GF_role_T0', 'SocDem_age'}, {'GF_social_T0', 'SocDem_age'}, ...                   % GF & Age
+    {'GF_role_T0', 'SocDem_cannabis_T0'}, {'GF_social_T0', 'SocDem_cannabis_T0'}, ...   % GF & Cannabis
+    {'GF_role_T0', 'DS_backward'}, {'GF_social_T0', 'DS_backward'}};                    % GF & Working Memory
+
+condition_list = ...
+   {'HC_Age', 'HC_Cannabis', 'HC_WM', ...               % Age, Cannabis, Working Memory
+    'HC_GFRole_Age', 'HC_GFSocial_Age', ...             % GF & Age
+    'HC_GFRole_Cannabis', 'HC_GFSocial_Cannabis', ...   % GF & Cannabis
+    'HC_GFRole_WM', 'HC_GFSocial_WM'};                  % GF & Working Memory
+
+% loop through covariates and GLM designs
+for i = 1:length(covariate_list)
+
+    options.condition = char(condition_list{i});
+    options.eeg.covar.include = 1;
+    options.eeg.covar.covariate_names = {covariate_list{i}};
+    
+    % Model-Based Analysis
+    for i_des = 1:length(options.eeg.stats.design_types)
+    
+        design = options.eeg.stats.design_types{i_des};
+        options = compi_get_design_regressors(design, options);
+
+        % sensor-level analysis
+        options.eeg.type = 'sensor';
+        compi_2ndlevel_singletrial_percondition(options);
+    
+        % source-level analysis
+        options.eeg.type = 'source';
+        compi_2ndlevel_singletrial_percondition(options);
+
+    end
+
+    % ERP-Based Analysis
+    for i_des = 1:length(options.eeg.erp.design_types)
+    
+        design = options.eeg.erp.design_types{i_des};
+        options = compi_get_design_regressors(design, options);
+
+        % sensor-level analysis
+        options.eeg.type = 'sensor';
+        compi_2ndlevel_erpstats_percondition(options);
+    
+        % source-level analysis
+        options.eeg.type = 'source';
+        compi_2ndlevel_erpsource_percondition(options);
+
+    end
+end
+
+
 %% ---------------------------------------------------------------------
 %  Figures: Sensor-Level
 %  ---------------------------------------------------------------------
@@ -191,7 +250,6 @@ compi_results_report_modelbased(options);
 %% ---------------------------------------------------------------------
 %  Figures: Source-Level
 %  ---------------------------------------------------------------------
-
 
 % plot source waveforms (model-based)
 for i_des = 1:length(options.eeg.erp.design_types)
@@ -219,56 +277,84 @@ for i_des = 1:length(options.eeg.erp.design_types)
     end
 end
 
-%%
-% Figure 4A -------------------------------------------------------------
-factor = 'oddball';
-timewindow = [301 309];
-compi_plot_source_ppm(timewindow, factor, options);
+%% Figure 4: ERP-based source analysis correlation with function
 
-tPeak = 305;
-sourceToFind = 'MSP_rightA1';
-covar = {'GF_role_T0'};
-compi_plot_covar_vs_source_amplitude(tPeak, sourceToFind, covar, factor, options);
+
+% Figure 4A -------------------------------------------------------------
+tPoint          = 305; % tWindow = [301 309]
+factor          = 'oddball';
+sourceToFind    = 'MSP_rightA1';
+covar           = {'GF_role_T0'};
+
+% create brain map from grand-average ERP
+compi_grand_average_source_inversion(tPoint, factor, options);
+
+% create scatter plot
+compi_plot_covar_vs_source_betas(tPoint, factor, sourceToFind, covar, options);
 
 % Figure 4B -------------------------------------------------------------
-factor = 'oddball_volatile';
-timewindow = [344 400];
-compi_plot_source_ppm(timewindow, factor, options);
+tPoint          = 398; % tWindow = [344 400]
+factor          = 'oddball_volatile';
+sourceToFind    = 'MSP_rightIFG';
+covar           = {'GF_social_T0'};
 
-tPeak = 398;
-sourceToFind = 'MSP_rightIFG';
-covar = {'GF_social_T0'};
-compi_plot_covar_vs_source_amplitude(tPeak, sourceToFind, covar, factor, options);
+% create brain map from grand-average ERP
+compi_grand_average_source_inversion(tPoint, factor, options);
 
-%%
+% create scatter plot
+compi_plot_covar_vs_source_betas(tPoint, factor, sourceToFind, covar, options);
+
+%% Figure S4: Model-based source analysis correlation with function
+
 % Figure S4A -------------------------------------------------------------
-factor = 'delta1';
-timewindow = [137 180];
-compi_plot_source_ppm(timewindow, factor, options);
+tPoint          = 156; % tWindow = [137 180]
+factor          = 'delta1';
+sourceToFind    = 'MSP_rightSTG';
+covar           = {'GF_role_T0'};
 
-tPeak = 156;
-sourceToFind = 'MSP_rightSTG';
-covar = {'GF_role_T0'};
-compi_plot_covar_vs_source_amplitude(tPeak, sourceToFind, covar, factor, options);
+% create brain map from grand-average ERP
+compi_grand_average_source_inversion(tPoint, factor, options);
 
-factor = 'delta2';
-timewindow = [145 176];
-compi_plot_source_ppm(timewindow, factor, options);
+% create scatter plot
+compi_plot_covar_vs_source_betas(tPoint, factor, sourceToFind, covar, options);
 
-tPeak = 156;
-sourceToFind = 'MSP_rightSTG';
-covar = {'GF_role_T0'};
-compi_plot_covar_vs_source_amplitude(tPeak, sourceToFind, covar, factor, options);
+tPoint          = 156; % tWindow = [145 176]
+factor          = 'delta2';
+sourceToFind    = 'MSP_rightSTG';
+covar           = {'GF_role_T0'};
+
+% create brain map from grand-average ERP
+compi_grand_average_source_inversion(tPoint, factor, options);
+
+% create scatter plot
+compi_plot_covar_vs_source_betas(tPoint, factor, sourceToFind, covar, options);
 
 % Figure S4B -------------------------------------------------------------
-factor = 'psi3';
-timewindow = [242 270];
-compi_plot_source_ppm(timewindow, factor, options);
+tPoint          = 254; % tWindow = [242 270]
+factor          = 'psi3';
+sourceToFind    = 'MSP_leftA1';
+covar           = {'GF_social_T0'};
+% create brain map from grand-average ERP
+compi_grand_average_source_inversion(tPoint, factor, options);
 
-tPeak = 254;
-sourceToFind = 'MSP_leftA1';
-covar = {'GF_social_T0'};
-compi_plot_covar_vs_source_amplitude(tPeak, sourceToFind, covar, factor, options);
+% create scatter plot
+compi_plot_covar_vs_source_betas(tPoint, factor, sourceToFind, covar, options);
+
+%% Figure S5: Effect of pwPEs
+
+% Figure S5A --------------------------------------------------------------
+tPoint          = 180; % tWindow = [242 270]
+factor          = 'epsilon2';
+
+% create brain map from grand-average ERP
+compi_grand_average_source_inversion(tPoint, factor, options);
+
+% Figure S5B --------------------------------------------------------------
+tPoint          = 277; % tWindow = [242 270]
+factor          = 'epsilon3';
+
+% create brain map from grand-average ERP
+compi_grand_average_source_inversion(tPoint, factor, options);
 
 %% Figure 3: Beta vs. GF Score Plots
 % GF: Role
@@ -276,22 +362,22 @@ covariate = {'GF_role_T0'};
 
 mask = fullfile(options.roots.erp, 'GF_Mask', 'MMN_GFRole_Cluster.nii');
 options = compi_get_design_regressors('oddball', options);
-compi_plot_covar_vs_betas(covariate, mask, options);
+compi_plot_covar_vs_sensor_betas(covariate, mask, options);
 
 mask = fullfile(options.roots.erp, 'GF_Mask', 'stableMMN_GFRole_Cluster.nii');
 options = compi_get_design_regressors('oddball_stable', options);
-compi_plot_covar_vs_betas(covariate, mask, options);
+compi_plot_covar_vs_sensor_betas(covariate, mask, options);
 
 % GF: Social
 covariate = {'GF_social_T0'};
 
 mask = fullfile(options.roots.erp, 'GF_Mask', 'MMN_GFSocial_Cluster.nii');
 options = compi_get_design_regressors('oddball', options);
-compi_plot_covar_vs_betas(covariate, mask, options);
+compi_plot_covar_vs_sensor_betas(covariate, mask, options);
 
 mask = fullfile(options.roots.erp, 'GF_Mask', 'volatileMMN_GFSocial_Cluster.nii');
 options = compi_get_design_regressors('oddball_volatile', options);
-compi_plot_covar_vs_betas(covariate, mask, options);
+compi_plot_covar_vs_sensor_betas(covariate, mask, options);
 
 
 %% ---------------------------------------------------------------------

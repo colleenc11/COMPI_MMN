@@ -1,11 +1,9 @@
 function D = compi_preprocessing_eyeblink_correction( id, options )
 % -------------------------------------------------------------------------
-% Performs all analysis steps for one subject of the COMPI study (up until 
-% first level modelbased statistics)
-%
+% COMPI_PREPROCESSING_EYEBLINK_CORRECTION Performs all preprocessing steps 
+% for one subject of the COMPI study (up until first level statistics).
 %   IN:     id          subject identifier string, e.g. '0101'
 %           options     as set by compi_mmn_options();
-%
 %   OUT:    D           Data structure of SPM EEG Analysis
 % ------------------------------------------------------------------------- 
 

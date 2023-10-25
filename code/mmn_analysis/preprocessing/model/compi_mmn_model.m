@@ -18,12 +18,6 @@ details = compi_get_subject_details(id, options);
 diary(details.eeg.logfile);
 tnueeg_display_analysis_step_header('model', 'mmn', id, '');
 
-% check destination folder
-if ~exist(details.dirs.results_behav, 'dir')
-    mkdir(details.dirs.results_behav);
-end
-cd(details.dirs.results_behav);
-
 try
     % check for previous preprocessing
     load(fullfile(details.dirs.preproc, 'design.mat'));
@@ -57,7 +51,8 @@ catch
     short_stable2 = zeros(1, 100);
     long_volatile2 = ones(1, 450);
 
-    phase_reg = [long_stable, short_volatile, short_stable, long_volatile, long_stable, short_volatile, short_stable2, long_volatile2];
+    phase_reg = [long_stable, short_volatile, short_stable, long_volatile, ...
+        long_stable, short_volatile, short_stable2, long_volatile2];
 
     design.phase = phase_reg';
 
@@ -75,6 +70,5 @@ end
 
 cd(options.roots.results);
 close all
-
 diary OFF
 end

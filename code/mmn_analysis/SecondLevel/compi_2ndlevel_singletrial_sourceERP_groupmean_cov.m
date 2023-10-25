@@ -43,10 +43,10 @@ for reg = 1: numel(regressors)
         % collect the regressor's source beta image from each subject
         scans = cell(nSubjects, 1);
     
-        if startsWith(regressor, 'oddball')
+        if startsWith(regressorName, 'oddball')
             for sub = 1: nSubjects
                 scans{sub, 1} = char(fullfile(imagePaths{sub}, ['source_' label '_' regressorName], ...
-                    'smoothed_condition_mmn.nii,1'));
+                    'smoothed_condition_diff.nii,1'));
             end
         end
 
