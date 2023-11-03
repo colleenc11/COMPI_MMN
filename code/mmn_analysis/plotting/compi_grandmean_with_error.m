@@ -55,24 +55,43 @@ for iCon = 1: numConditions
 end
 
 % calculate the high low wave difference and do averaging
-if startsWith(regressor, 'oddball')
-    diffwaves = ga.deviant.data - ga.standard.data;
-    nsubjects = size(ga.standard.data, 1);
-    ga.diff.data = diffwaves;
-    ga.diff.mean = mean(diffwaves);
-    ga.diff.sd  = std(diffwaves);
-    ga.diff.error  = std(diffwaves)/sqrt(nsubjects);
-    ga.diff.time = ga.time;
-    ga.diff.electrode = ga.electrode;
-else 
-    diffwaves = ga.high.data - ga.low.data;
-    nsubjects = size(ga.low.data, 1);
-    ga.diff.data = diffwaves;
-    ga.diff.mean = mean(diffwaves);
-    ga.diff.sd  = std(diffwaves);
-    ga.diff.error  = std(diffwaves)/sqrt(nsubjects);
-    ga.diff.time = ga.time;
-    ga.diff.electrode = ga.electrode;
+switch regressor
+    case {'oddball'}
+        diffwaves = ga.deviant.data - ga.standard.data;
+        nsubjects = size(ga.standard.data, 1);
+        ga.diff.data = diffwaves;
+        ga.diff.mean = mean(diffwaves);
+        ga.diff.sd  = std(diffwaves);
+        ga.diff.error  = std(diffwaves)/sqrt(nsubjects);
+        ga.diff.time = ga.time;
+        ga.diff.electrode = ga.electrode;
+    case {'oddball_stable'}
+        diffwaves = ga.devStab.data - ga.standStab.data;
+        nsubjects = size(ga.standStab.data, 1);
+        ga.diff.data = diffwaves;
+        ga.diff.mean = mean(diffwaves);
+        ga.diff.sd  = std(diffwaves);
+        ga.diff.error  = std(diffwaves)/sqrt(nsubjects);
+        ga.diff.time = ga.time;
+        ga.diff.electrode = ga.electrode;
+    case {'oddball_volatile'}
+        diffwaves = ga.devVol.data - ga.standVol.data;
+        nsubjects = size(ga.standVol.data, 1);
+        ga.diff.data = diffwaves;
+        ga.diff.mean = mean(diffwaves);
+        ga.diff.sd  = std(diffwaves);
+        ga.diff.error  = std(diffwaves)/sqrt(nsubjects);
+        ga.diff.time = ga.time;
+        ga.diff.electrode = ga.electrode;
+    otherwise 
+        diffwaves = ga.high.data - ga.low.data;
+        nsubjects = size(ga.low.data, 1);
+        ga.diff.data = diffwaves;
+        ga.diff.mean = mean(diffwaves);
+        ga.diff.sd  = std(diffwaves);
+        ga.diff.error  = std(diffwaves)/sqrt(nsubjects);
+        ga.diff.time = ga.time;
+        ga.diff.electrode = ga.electrode;
 end
 
 end

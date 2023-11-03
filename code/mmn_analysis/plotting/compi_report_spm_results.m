@@ -1,4 +1,4 @@
-function [] = compi_report_spm_results( options, flag )
+function [] = compi_report_spm_results( options, regressor, flag )
 %--------------------------------------------------------------------------
 % COMPI_REPORT_SPM_RESULTS
 %   IN:     options - the struct that holds all analysis options
@@ -19,27 +19,23 @@ spm('Defaults', 'EEG');
 % record what we're doing
 diary(fullfile(options.roots.log, sprintf('results report%s')));
 
-% names of the single-trial regressor
-regressor = options.eeg.stats.currRegressor{1};
-
 % scalpmap images of first regressor
-
 if strcmp(options.condition, 'groupdiff')
     switch options.eeg.stats.mode
         case 'modelbased'
-            spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
+            spmRoot = fullfile(options.roots.hgf, options.condition, ...
                     regressor);
         case 'erpbased'
-            switch options.eeg.erp.type
-                case {'oddball', 'oddball_phases'}
+            switch regressor
+                case 'oddball'
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'diffwave');
-                case 'oddball_stable'
+                            'oddball', 'SPM', 'diffwave');
+                case 'oddball_phase'
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'stable');
-                case 'oddball_volatile'
+                            'oddball', 'SPM', 'diffwave_phase');
+                case {'oddball_stable', 'oddball_volatile'}
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'volatile');
+                            regressor, 'SPM');
             end
     end
     pngFiles = fullfile(spmRoot, regressor, 'scalpmaps_*.png');
@@ -49,20 +45,19 @@ if strcmp(options.condition, 'groupdiff')
 elseif any(strncmp(options.subjects.group_labels, options.condition, 2))
     switch options.eeg.stats.mode
         case 'modelbased'
-            spmRoot = fullfile(options.roots.results_hgf, options.condition, options.eeg.stats.design,...
+            spmRoot = fullfile(options.roots.hgf, options.condition, options.eeg.stats.design,...
                     regressor);
         case 'erpbased'
-            
-            switch options.eeg.erp.type
-                case {'oddball', 'oddball_phases'}
+            switch regressor
+                case 'oddball'
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'diffwave');
-                case 'oddball_stable'
+                            'oddball', 'SPM', 'diffwave');
+                case 'oddball_phase'
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'stable');
-                case 'oddball_volatile'
+                            'oddball', 'SPM', 'diffwave_phase');
+                case {'oddball_stable', 'oddball_volatile'}
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'volatile');
+                            regressor, 'SPM');
             end
     end
     pngFiles = fullfile(spmRoot, regressor, 'scalpmaps_*.png');
@@ -77,7 +72,7 @@ try
     listDir = dir(pngFiles);
     list = {listDir(~[listDir.isdir]).name};
     if ~isempty(list)
-        disp(['2nd level results for regressors in ' options.eeg.erp.type ...
+        disp(['2nd level results for regressors in ' regressor ...
         ' design in condition ' options.condition ...
         ' have been reported before.']);
         if options.eeg.stats.overwrite
@@ -92,7 +87,7 @@ try
 catch
     disp(['Reporting 2nd level results for regressors for ' ...
         options.condition ' condition in the ' ...
-        options.eeg.erp.type  ' design...']);
+        regressor  ' design...']);
     
     % p value thresholding
     switch options.eeg.stats.pValueMode

@@ -43,7 +43,7 @@ end
 
 legend(plotHandles, condNames{:});;
 ylabel('Field intensity (in \muV)');
-xlim([timeAxis(1) timeAxis(end)]);
+xlim([timeAxis(1) 400]);
 xlabel('Time (ms after tone onset)');
 grid on;
 

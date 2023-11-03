@@ -1,4 +1,4 @@
-function compi_plot_blobs(options)
+function compi_plot_blobs(options, regressor)
 %--------------------------------------------------------------------------
 % COMPI_PLOT_BLOBS Plot maximum intensity projections of the significant
 % clusters.
@@ -12,25 +12,24 @@ if nargin < 1
     options = compi_mmn_options();
 end
 
-regressor = options.eeg.stats.currRegressor{1};
 contrast_idx = options.eeg.fig.contrastIdx;
 
 %% Set options
 switch options.eeg.stats.mode
     case 'modelbased'
-        spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
+        spmRoot = fullfile(options.roots.hgf, options.condition, ...
                                 options.eeg.stats.design, regressor);
     case 'erpbased'
-        switch options.eeg.erp.type
-            case {'oddball', 'oddball_phases'}
+        switch regressor
+            case 'oddball'
                 spmRoot = fullfile(options.roots.erp, options.condition, ...
-                        regressor, 'SPM', 'diffwave');
-            case 'oddball_stable'
+                        'oddball', 'SPM', 'diffwave');
+            case 'oddball_phase'
                 spmRoot = fullfile(options.roots.erp, options.condition, ...
-                        regressor, 'SPM', 'stable');
-            case 'oddball_volatile'
+                        'oddball', 'SPM', 'diffwave_phase');
+            case {'oddball_stable', 'oddball_volatile'}
                 spmRoot = fullfile(options.roots.erp, options.condition, ...
-                        regressor, 'SPM', 'volatile');
+                        regressor, 'SPM');
         end
 end
 

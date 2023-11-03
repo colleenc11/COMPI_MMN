@@ -38,10 +38,10 @@ for idCell = options.subjects.all
 
     % determine the image file path based on the factorName
     switch factor
-        case {'oddball', 'oddball_volatile'}
+        case {'oddball', 'oddball_stable', 'oddball_volatile'}
             imgFile = fullfile(details.eeg.erp.source.pathStats, ...
                 ['source_' sourceToFind '_' factor], ...
-                    'smoothed_condition_mmn.nii,1');
+                    'smoothed_condition_diff.nii,1');
         case 'delta1'
             imgFile = fullfile(details.eeg.firstLevel.source.pathStats, ...
                 'lowPE', sourceToFind, ['beta_0002.nii']);
@@ -84,7 +84,7 @@ set(gcf,'position',[500,500,400,300])
 scatter(betaAll, gfScores, 'filled', 'k', 'SizeData', 70);
 ylim([5,10])
 set(gca, 'FontSize', 30)
-% xlim([-1.5,2])
+xlim([-0.2,0.2])
 % xlabel('Beta Value', 'FontSize', 14);
 % ylabel('GF', 'FontSize', 14);
 % title('Scatter plot of Mean Beta Value vs. GF');

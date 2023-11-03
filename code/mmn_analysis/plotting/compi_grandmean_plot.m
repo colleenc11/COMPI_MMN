@@ -18,10 +18,17 @@ lineWidth   = 2;
 titleStr    = [regressor ' ERPs at ' chanName ' in ' options.condition];
 
 % get condition names
-if startsWith(regressor, 'oddball')
-    condNames = {'standard', 'deviant', 'diff'};             
-else
-    condNames = {'low', 'high', 'diff'};             
+switch regressor
+    case {'oddball'}
+        condNames = {'standard', 'deviant', 'diff'};             
+    case {'oddball_stable'}
+        condNames = {'standStab', 'devStab', 'diff'}; 
+    case {'oddball_volatile'}
+        condNames = {'standVol', 'devVol', 'diff'};
+    case {'oddball_phase'}
+        condNames = {'stableMMN', 'volMMN'}; 
+    otherwise
+        condNames = {'low', 'high', 'diff'};             
 end
 
 % make sure we have a results directory

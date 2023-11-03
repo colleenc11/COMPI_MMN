@@ -1,4 +1,4 @@
-function [] = compi_extract_first_last_sig_voxel( options, flag )
+function [] = compi_extract_first_last_sig_voxel( options, regressor, flag )
 %--------------------------------------------------------------------------
 % COMPI_EXTRACT_FIRST_LAST_SIG_VOXEL
 %   IN:     options - the struct that holds all analysis options
@@ -8,8 +8,7 @@ function [] = compi_extract_first_last_sig_voxel( options, flag )
 %--------------------------------------------------------------------------
 
 % general analysis options
-if nargin < 1
-    options = mnCHR_set_analysis_options;
+if nargin < 2
     flag = options.condition;
 end
 
@@ -19,9 +18,6 @@ spm('Defaults', 'EEG');
 % record what we're doing
 diary(fullfile(options.roots.log, sprintf('results report%s')));
 
-% names of the single-trial regressor
-regressor = options.eeg.stats.currRegressor{1};
-
 % scalpmap images of first regressor
 if strcmp(options.condition, 'groupdiff')
     switch options.eeg.stats.mode
@@ -29,17 +25,16 @@ if strcmp(options.condition, 'groupdiff')
             spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
                     option.eeg.stats.design, regressor);
         case 'erpbased'
-
-            switch options.eeg.erp.type
-                case {'oddball', 'oddball_phases'}
+            switch regressor
+                case 'oddball'
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'diffwave');
-                case 'oddball_stable'
+                            'oddball', 'SPM', 'diffwave');
+                case 'oddball_phase'
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'stable');
-                case 'oddball_volatile'
-                    spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'volatile');
+                            'oddball', 'SPM', 'diffwave_phase');
+                    case {'oddball_stable', 'oddball_volatile'}
+                        spmRoot = fullfile(options.roots.erp, options.condition, ...
+                                regressor, 'SPM');
             end
     end
     pngFiles = fullfile(spmRoot, regressor, 'scalpmaps_*.png');
@@ -49,19 +44,19 @@ if strcmp(options.condition, 'groupdiff')
 elseif any(strncmp(options.subjects.group_labels, options.condition, 2))
     switch options.eeg.stats.mode
         case 'modelbased'
-            spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
+            spmRoot = fullfile(options.roots.hgf, options.condition, ...
                     options.eeg.stats.design, regressor);
         case 'erpbased'
-            switch options.eeg.stats.type
-                case {'oddball', 'oddball_phases'}
+            switch regressor
+                case 'oddball'
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'volatileMMN');
-                case 'oddball_stable'
+                            'oddball', 'SPM', 'diffwave');
+                case 'oddball_phase'
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'stable');
-                case 'oddball_volatile'
+                            'oddball', 'SPM', 'diffwave_phase');
+                case {'oddball_stable', 'oddball_volatile'}
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            regressor, 'SPM', 'volatile');
+                            regressor, 'SPM');
             end
     end
     pngFiles = fullfile(spmRoot, regressor, 'scalpmaps_*.png');
@@ -76,7 +71,7 @@ try
     listDir = dir(pngFiles);
     list = {listDir(~[listDir.isdir]).name};
     if ~isempty(list)
-        disp(['2nd level results for regressors in ' options.eeg.erp.type ...
+        disp(['2nd level results for regressors in ' regressor ...
         ' design in condition ' options.condition ...
         ' have been reported before.']);
         if options.eeg.stats.overwrite
@@ -91,7 +86,7 @@ try
 catch
     disp(['Reporting 2nd level results for regressors for ' ...
         options.condition ' condition in the ' ...
-        options.eeg.stats.type  ' design...']);
+        regressor  ' design...']);
     
     % p value thresholding
     switch options.eeg.stats.pValueMode
@@ -132,7 +127,6 @@ catch
 
     end
 end
-cd(options.roots.results);
 
 diary OFF
 end
