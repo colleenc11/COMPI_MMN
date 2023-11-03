@@ -1,28 +1,31 @@
 function compi_plot_trialstats( options )
-%compi_plot_trialstats Performs all quality checks for trial statistics.
-%   IN:     optionally:
-%           options         - the struct that contains all analysis options
+%--------------------------------------------------------------------------
+% COMPI_PLOT_TRIALSTATS Performs quality checks for trial statistics.
+%   IN:     options      - the struct that contains all analysis options
 %   OUT:    -
-
+%--------------------------------------------------------------------------
 if nargin < 1
-    options = tayeeg_analysis_options;
+    options = compi_mmn_options;
 end
 
+% Create directory if it doesn't exist
 if ~exist(options.roots.diag_eeg, 'dir')
     mkdir(options.roots.diag_eeg);
 end
 
-% loop through subjects and collect trial numbers
+% Loop through subjects and collect trial numbers
 for iSub = 1: length(options.subjects.all)
     subID = char(options.subjects.all{iSub});
     details = compi_get_subject_details(subID, options); 
 
-    load(details.eeg.trialStats); %trialStats
-    load(details.eeg.eyeblinkrejectstats) %eyeBlinks
+    % Load trial statistics and eye blink rejection stats
+    load(details.eeg.trialStats); 
+    load(details.eeg.eyeblinkrejectstats)
 
     D               = spm_eeg_load(details.eeg.prepfile);
     nInitial        = length(D.events);
 
+    % Collect trial stats based on eye correction method
     switch options.eeg.preproc.eyeCorrMethod
         case 'reject'
             nEyeblinktrials             = numel(trialStats.idxEyeartefacts.tone);
@@ -34,16 +37,15 @@ for iSub = 1: length(options.subjects.all)
             nEyeblinks(iSub)            = 0;
     end
 
-%     nEyeblinks(iSub)       = trialStats.numEyeblinks;
+    % Gather other trial statistics
     nArtefacts(iSub)       = trialStats.numArtefacts;
     nBadChannels(iSub)     = trialStats.numBadChannels;
     nGoodTrialsTone(iSub)  = trialStats.nGoodTrials.tone;
 
 end
 
-%% Plot Trial Statistics
-% Eye-blink treatment
-% table and plot
+%% Plot Trial Statistics based on the eye correction method
+
 switch options.eeg.preproc.eyeCorrMethod
     case 'reject'
         % table
@@ -79,6 +81,7 @@ switch options.eeg.preproc.eyeCorrMethod
         
 end
 
+% Save the table and plot
 save(fullfile(options.roots.diag_eeg, 'trialStatsTable.mat'),'trialStatsTable');
 saveas(fh, fullfile(options.roots.diag_eeg, 'trialStats'), 'png');
 

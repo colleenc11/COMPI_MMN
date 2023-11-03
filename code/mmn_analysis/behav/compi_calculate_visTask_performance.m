@@ -1,9 +1,10 @@
-function [ perform, meanRT, errors, misses ] = compi_calculate_performance( MMN )
+function [ perform, meanRT, errors, misses ] = compi_calculate_visTask_performance( MMN )
 % -------------------------------------------------------------------------
-% COMPI_CALCULATE_PERFORMANCE Calculates performance score for the visual 
-% task. This function calculates and returns the performance score (higher 
-% is better, minimum is zero, maximum around 0.6), the mean reaction time 
-% (RT), and counts the number of error presses and misses in visual events.
+% COMPI_CALCULATE_VISTASK_PERFORMANCE Calculates performance score for the 
+% visual task. This function calculates and returns the performance score 
+% (higher is better, minimum is zero, maximum around 0.6), the mean 
+% reaction time (RT), and counts the number of error presses and misses in 
+% visual events.
 %   IN:    MMN      Behavior results structure containing stimulus and
 %                   response data.
 %   OUT:   perform  Performance score.

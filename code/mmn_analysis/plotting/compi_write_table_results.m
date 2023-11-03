@@ -1,20 +1,22 @@
-function [xSPM, varargout] = tayeeg_write_table_results( xSPM, pValueMode, setLevel, nVoxMin )
-% TAYEEG_WRITE_TABLE_RESULTS
+function [xSPM, varargout] = compi_write_table_results( xSPM, pValueMode, setLevel, nVoxMin )
+%--------------------------------------------------------------------------
+% COMPI_WRITE_TABLE_RESULTS Generate and write a table of results from SPM
+% analysis. 
 %   IN:
+%       xSPM       - Structure containing SPM, distribution & filtering details.
+%       pValueMode - Mode for p-value: 'uncorr', 'peakFWE', or 'clusterFWE' 
+%                    (default: 'clusterFWE').
+%       setLevel   - Boolean indicating if set-level inference columns 
+%                    should be kept (default: false).
+%       nVoxMin    - Minimum number of voxels for significance (default: 15).
+%
 %   OUT:
-% xSPM      - structure containing SPM, distribution & filtering details
-% .swd      - SPM working directory - directory containing current SPM.mat
-% .title    - title for comparison (string)
-% .Ic       - indices of contrasts (in SPM.xCon)
-% .n        - conjunction number <= number of contrasts
-% .Im       - indices of masking contrasts (in xCon)
-% .pm       - p-value for masking (uncorrected)
-% .Ex       - flag for exclusive or inclusive masking
-% .u        - height threshold
-% .k        - extent threshold {voxels}
-% .thresDesc - description of height threshold (string)
+%       xSPM       - Updated structure.
+%       varargout  - Additional outputs including cluster data, full table,
+%                    and reduced table.
+%--------------------------------------------------------------------------
 
-%-- check input ----------------------------------------------------------%
+% Default values for inputs
 if nargin < 4
     nVoxMin = 15;
 end
@@ -172,8 +174,6 @@ if ~isempty(locs)
     end
     fclose(fid);
 
-
-
     %-- display reduced table --------------------------------------------%
     redDat = TabDat.dat;
     switch pValueMode
@@ -207,8 +207,6 @@ if ~isempty(locs)
     end
     disp(redTab);
     varargout{4} = redTab;
-    
-
     
 else
     varargout{1} = [];

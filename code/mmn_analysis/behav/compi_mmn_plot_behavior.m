@@ -25,7 +25,7 @@ for iSub = 1:length(options.subjects.all)
     load(details.files.behav_eeg);
 
     % Calculate performance metrics
-    [ performance, meanRT, errors, misses ] = compi_calculate_performance( MMN );
+    [ performance, meanRT, errors, misses ] = compi_calculate_visTask_performance( MMN );
 
     % Store calculated metrics for each subject
     avgPerformance(iSub) = performance;

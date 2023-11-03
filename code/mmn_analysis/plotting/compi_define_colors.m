@@ -1,5 +1,8 @@
 function [ clrs ] = compi_define_colors( )
-%COMPI_DEFINE_COLORS Defines all colors used for paper figures in the COMPI study.
+% -------------------------------------------------------------------------
+% COMPI_DEFINE_COLORS Defines all colors used for paper figures in the 
+% COMPI study.
+% -------------------------------------------------------------------------
 clrs.darkred    = [0.804 0 0];  % mu3, epsi3 (#CD0000)
 clrs.darkgreen  = [0 0.502 0];  % mu2, epsi2 (#008000)
 clrs.lightgreen = [0 0.702 0];  % mu1 (#00B300)

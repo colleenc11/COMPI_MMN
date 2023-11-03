@@ -1,8 +1,9 @@
 function [ clusterTimeWindow ] = compi_extract_all_sig_voxels( xSPM, titleStr )
-%COMPI_EXTRACT_ALL_SIG_VOXELS Extracts all information on significant
-%clusters that may be used in subsequent plotting: thresholding parameters,
-%peak coordinates per cluster, p-values and extent of clusters, significant
-%time window per cluster. 
+% -------------------------------------------------------------------------
+% COMPI_EXTRACT_ALL_SIG_VOXELS Extracts all information on significant
+% clusters that may be used in subsequent plotting: thresholding parameters,
+% peak coordinates per cluster, p-values and extent of clusters, significant
+% time window per cluster. 
 %   IN:     xSPM        - the struct that contains the thresholded SPM, or
 %                       the parameters needed for thresholding (see below)
 %           titleStr    - a string that will form the title of the contrast,
@@ -25,6 +26,7 @@ function [ clusterTimeWindow ] = compi_extract_all_sig_voxels( xSPM, titleStr )
 % .u        - height threshold
 % .k        - extent threshold {voxels}
 % .thresDesc - description of height threshold (string)
+% -------------------------------------------------------------------------
 
 %-- check input ----------------------------------------------------------%
 if ~nargin

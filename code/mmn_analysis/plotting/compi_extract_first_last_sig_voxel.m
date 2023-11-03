@@ -1,16 +1,12 @@
-function [] = compi_extract_first_last_sig_voxel( options, regressor, flag )
+function [] = compi_extract_first_last_sig_voxel( options, regressor)
 %--------------------------------------------------------------------------
-% COMPI_EXTRACT_FIRST_LAST_SIG_VOXEL
-%   IN:     options - the struct that holds all analysis options
-%           flag    - string indicating either the condition ('HC',
-%           'CHR') or 'groupdiff'
+% COMPI_EXTRACT_FIRST_LAST_SIG_VOXEL Extracts and saves first and last
+% significant voxel from results file.
+% 
+%   IN:     options   - the struct that holds all analysis options
+%           regressor - the specific regressor for the analysis
 %   OUT:    --
 %--------------------------------------------------------------------------
-
-% general analysis options
-if nargin < 2
-    flag = options.condition;
-end
 
 % prepare SPM, as always
 spm('Defaults', 'EEG');
@@ -19,55 +15,30 @@ spm('Defaults', 'EEG');
 diary(fullfile(options.roots.log, sprintf('results report%s')));
 
 % scalpmap images of first regressor
-if strcmp(options.condition, 'groupdiff')
-    switch options.eeg.stats.mode
-        case 'modelbased'
-            spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
-                    option.eeg.stats.design, regressor);
-        case 'erpbased'
-            switch regressor
-                case 'oddball'
-                    spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            'oddball', 'SPM', 'diffwave');
-                case 'oddball_phase'
-                    spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            'oddball', 'SPM', 'diffwave_phase');
-                    case {'oddball_stable', 'oddball_volatile'}
-                        spmRoot = fullfile(options.roots.erp, options.condition, ...
-                                regressor, 'SPM');
-            end
-    end
-    pngFiles = fullfile(spmRoot, regressor, 'scalpmaps_*.png');
-    % adjust title depending on comparison
-    contrastTitle = [options.subjects.group_labels{1} ' > ' options.subjects.group_labels{2}];
-    nVoxMin = 1;
-elseif any(strncmp(options.subjects.group_labels, options.condition, 2))
-    switch options.eeg.stats.mode
-        case 'modelbased'
-            spmRoot = fullfile(options.roots.hgf, options.condition, ...
-                    options.eeg.stats.design, regressor);
-        case 'erpbased'
-            switch regressor
-                case 'oddball'
-                    spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            'oddball', 'SPM', 'diffwave');
-                case 'oddball_phase'
-                    spmRoot = fullfile(options.roots.erp, options.condition, ...
-                            'oddball', 'SPM', 'diffwave_phase');
+switch options.eeg.stats.mode
+    case 'modelbased'
+        spmRoot = fullfile(options.roots.results_hgf, options.condition, ...
+                option.eeg.stats.design, regressor);
+    case 'erpbased'
+        switch regressor
+            case 'oddball'
+                spmRoot = fullfile(options.roots.erp, options.condition, ...
+                        'oddball', 'SPM', 'diffwave');
+            case 'oddball_phase'
+                spmRoot = fullfile(options.roots.erp, options.condition, ...
+                        'oddball', 'SPM', 'diffwave_phase');
                 case {'oddball_stable', 'oddball_volatile'}
                     spmRoot = fullfile(options.roots.erp, options.condition, ...
                             regressor, 'SPM');
-            end
-    end
-    pngFiles = fullfile(spmRoot, regressor, 'scalpmaps_*.png');
-    contrastTitle = 'Effect of ';
-    nVoxMin = 1;
+        end
 end
 
+pngFiles = fullfile(spmRoot, regressor, 'scalpmaps_*.png');
+contrastTitle = [options.condition];
+nVoxMin = 1;
 
-%%% FIX THIS %%%
+% check for previous results and either do nothing or overwrite
 try
-    % check for previous results report
     listDir = dir(pngFiles);
     list = {listDir(~[listDir.isdir]).name};
     if ~isempty(list)
@@ -98,6 +69,7 @@ catch
             thresDesc = 'FWE';
     end
 
+    % Prepare SPM structure.
     xSPM = struct;
     xSPM.swd      = spmRoot;
     xSPM.title    = [contrastTitle regressor];
@@ -110,15 +82,14 @@ catch
     xSPM.k        = 0;
     xSPM.thresDesc = thresDesc;
 
-    %-- save results table as csv ------------------------------------%
-    xSPM = tayeeg_write_table_results(xSPM, ...
+    % Save results table as CSV.
+    xSPM = compi_write_table_results(xSPM, ...
         options.eeg.stats.pValueMode, false, nVoxMin);
     
-    %-- significant clusters: info & plotting ------------------------%
+    % Extract and save significant clusters information.
     locs = xSPM.XYZ;
     % only continue if there are surviving voxels
     if ~isempty(locs)
-        % extract all plotting-relevant contrast info 
         clusterTimeWindow = compi_extract_all_sig_voxels(xSPM, ...
                                 [options.condition ':']);
 
