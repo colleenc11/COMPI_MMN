@@ -232,11 +232,6 @@ catch
                     Da1 = compi_spm_eeg_spatial_confounds(S, doCompareSVD, details); 
                 
                 case {'berg', 'ssp'}
-                    % Compare old version of SVD analysis (using all 
-                    % trials) with current version of SVD analysis 
-                    % (using only good trials)
-                    doCompareSVD = options.eeg.preproc.eyeblinkCompareSVD;
-                    
                     % Compute spatial confounds based on artefacts
                     S = [];
                     S.D = Da;
@@ -244,7 +239,7 @@ catch
                     S.timewin = options.eeg.preproc.eyeblinkwin;
                     S.ncomp = details.eeg.preproc.nComponentsforRejection;
                     S.conditions = 'eyeblink';
-                    Da1 = compi_spm_eeg_spatial_confounds(S, doCompareSVD, details); 
+                    Da1 = spm_eeg_spatial_confounds(S); 
             end
             
             % diagnostics: save EB components (confounds) figure
@@ -266,7 +261,7 @@ catch
             S.D = D;
             S.method = 'SPMEEG';
             S.conffile = fullfile(Da1);
-            D = compi_spm_eeg_spatial_confounds(S);
+            D = spm_eeg_spatial_confounds(S);
             
             if ~keep, delete(Da1); end
             
