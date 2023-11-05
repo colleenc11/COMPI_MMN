@@ -37,4 +37,4 @@ Steps to run the pipeline:
 
 1. Open Matlab and navigate to the ```COMPI_MMN/code``` directory.
 2. From within this directory, run the 'compi_master_eeg' script.
-3. Analysis options can be configured in ```compi_mmn_options```.
+3. To configure analysis options, navigate to the ```code/configs/options``` directory and modify the ```compi_mmn_options``` file.
