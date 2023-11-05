@@ -1,0 +1,4 @@
+
+[submodule "code/Toolboxes/SPM12"]
+	path = code/Toolboxes/SPM12
+	url = https://github.com/spm/spm12.git
