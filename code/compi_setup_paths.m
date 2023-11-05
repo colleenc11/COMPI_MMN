@@ -33,9 +33,6 @@ addpath(pathSpm);
 compi_setup_spm();
 
 rmpath(genpath(fullfile(pathProject,'Toolboxes', 'tapas_6.0')));
-rmpath(genpath(fullfile(pathProject,'Toolboxes', 'HGF_3.0')));
-
-rmpath(genpath(fullfile(pathProject,'behav','FirstLevel','hgf','utils','HGF_tutorial')));
 
 warning('on','all')
 
