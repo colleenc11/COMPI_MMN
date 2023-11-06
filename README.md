@@ -38,3 +38,8 @@ Steps to run the pipeline:
 1. Open Matlab and navigate to the ```COMPI_MMN/code``` directory.
 2. From within this directory, run the 'compi_master_eeg' script.
 3. To configure analysis options, navigate to the ```code/configs/options``` directory and modify the ```compi_mmn_options``` file.
+
+## Third Party Code
+The repository also contains the following external, freely available Matlab tools:
+-  the function ```notBoxPlot``` by Rob Campbell, available [here](https://github.com/raacampbell/notBoxPlot).
+-  the ```TNUEEG toolbox``` for preprocessing, aligning with the methods presented in the study by [Weber et al., 2023](https://elifesciences.org/articles/74835).
