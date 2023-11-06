@@ -1,0 +1,7 @@
+# ignore data in examples
+examples/mnket_mmn/data
+examples/dprst_mmn/data
+
+# ignore logfiles in examples
+examples/mnket_mmn/*.log
+examples/dprst_mmn/*.log
