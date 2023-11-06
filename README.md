@@ -42,4 +42,4 @@ Steps to run the pipeline:
 ## Third Party Code
 The repository also contains the following external, freely available Matlab tools:
 -  the function ```notBoxPlot``` by Rob Campbell, available [here](https://github.com/raacampbell/notBoxPlot).
--  the ```TNUEEG toolbox``` for preprocessing, aligning with the methods presented in the study by [Weber et al., 2023](https://elifesciences.org/articles/74835).
+-  the ```TNUEEG toolbox``` for preprocessing, aligning with the methods presented in the study by [Weber et al., 2022](https://elifesciences.org/articles/74835).
