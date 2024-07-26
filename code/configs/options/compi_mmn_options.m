@@ -41,7 +41,7 @@ options.eeg.covar.include   = 0;            % Include covariates in analysis (1 
 options = compi_setup_roots(preprocStrategyValueArray, options);
 
 %% Get subjects
-% Enter new subjects here, include in missingness switch and eeg first flag
+% Enter new subjects here
 options = compi_mmn_subject_options(options);
 
 %% EEG specific options

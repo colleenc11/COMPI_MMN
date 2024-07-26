@@ -51,7 +51,7 @@ catch
         case 'sensor'
             scndlvlroot = fullfile(options.roots.hgf, options.condition, options.eeg.stats.design);
         case 'source'
-            scndlvlroot = fullfile(options.roots.source, options.condition);
+            scndlvlroot = fullfile(options.roots.source, options.condition, options.eeg.stats.design);
     end
 
     if ~exist(scndlvlroot, 'dir')

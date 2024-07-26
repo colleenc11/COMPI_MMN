@@ -22,7 +22,7 @@ gaFile      = fullfile(options.roots.erp, options.condition, factor, 'GA', ['GA_
 D           = spm_eeg_load(gaFile);
 
 % create a head model
-hmJob = dmpad_headmodel_job(D, fid, details, options);
+hmJob = compi_headmodel_job(D, fid, details, options);
 spm_jobman('run', hmJob);
 D = reload(D);
 clear job;

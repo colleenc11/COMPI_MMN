@@ -177,6 +177,8 @@ details.eeg.firstLevel.source.pathStats      = fullfile(details.eeg.subjectroot.
 details.eeg.firstLevel.source.prefixImages   = 'source_';
 
 details.eeg.source.savefilename              = fullfile(details.eeg.preproot, ['B' id '_' details.eeg.sfxFilter '.mat']);
+details.eeg.source.iidsavefilename           = fullfile(details.eeg.preproot, ['IID_B' id '_' details.eeg.sfxFilter '.mat']);
+
 
 % take smoothed or unsmoothed images
 switch options.eeg.preproc.smoothing

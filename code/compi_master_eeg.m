@@ -64,6 +64,7 @@ compi_quality_check(options);
 fprintf('\n===\n\t Running second level model-based analysis with HCs: \n\n');
 
 options.condition = 'HC';
+options.eeg.covar.include = 0;
 
 for i_des = 1:length(options.eeg.stats.design_types)
 
@@ -87,6 +88,7 @@ end
 fprintf('\n===\n\t Running second level ERP-based analysis with HCs: \n\n');
 
 options.condition = 'HC';
+options.eeg.covar.include = 0;
 
 for i_des = 1:length(options.eeg.erp.design_types)
 

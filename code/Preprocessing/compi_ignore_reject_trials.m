@@ -12,20 +12,7 @@ function compi_ignore_reject_trials(id, options)
 details = compi_get_subject_details(id, options);
 
 %% remove rejected / bad trials
-switch lower(details.eeg.preproc.eyeCorrMethod)
-    % first, remove rejected trials due to eyeblinks
-    case 'reject'
-        ebstats = getfield(load(details.eeg.eyeblinkrejectstats), 'ebstats');
-        % we have to adjust the indices of excluded trials in run2 for the remaining number of
-        % EB-free trials in run1 to make the indices fit to the merged file (after EB rejection,
-        % before artefact rejection).
-        nTrialsRemainingInFirstRun = ebstats(1).nTrials.Outcome;
-        eyeblinks_run1 = ebstats(1).idxExcluded.Outcome;
-        eyeblinks_run2 = ebstats(2).idxExcluded.Outcome + nTrialsRemainingInFirstRun;
-        remove_eyeblink_trials(eyeblinks_run1, eyeblinks_run2, details);
-end
-
-% now, remove other artefactual trials
+% Remove artefactual trials
 badtrials = get_bad_trials(details);
 design = remove_bad_trials(badtrials, options, details);
 
@@ -39,28 +26,6 @@ end
 function bt = get_bad_trials(details)
 D = spm_eeg_load(details.eeg.prepfile);
 bt = badtrials(D);
-end
-
-function remove_eyeblink_trials(eb1, eb2, details)
-
-% get design matrix
-design = getfield(load(details.eeg.firstLevelDesignFileInit), 'design');
-fns = fieldnames(design);
-
-% remove trials from run 1
-for i = 1: numel(fns)
-    fn = char(fns(i));
-    design.(fn)(eb1) = [];
-end
-
-% remove trials from run 2
-for i = 1: numel(fns)
-    fn = char(fns(i));
-    design.(fn)(eb2) = [];
-end
-
-% save pruned design
-save(details.eeg.firstLevelDesignFileEBPruned, 'design');
 end
 
 function design = remove_bad_trials(bt, options, details)

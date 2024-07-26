@@ -104,7 +104,7 @@ else
     
     % Fixing labels and chan unit for the COMPI study (should only be used
     % for this setup)
-     hdr.label = cellfun(@(x) erase(x,'1-'), hdr.label,  'UniformOutput', false);
+    % hdr.label = cellfun(@(x) erase(x,'1-'), hdr.label,  'UniformOutput', false);
 %     hdr.chanunit = cellfun(@(x) strrep(x,'unknown','uV'), hdr.chanunit,  'UniformOutput', false);
     
     if isfield(hdr, 'label')

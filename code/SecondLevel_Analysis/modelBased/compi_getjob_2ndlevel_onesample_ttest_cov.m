@@ -71,7 +71,7 @@ job{3}.spm.stats.con.consess{i_con+2}.tcon.name = ['Pos effect of ' factorName];
 job{3}.spm.stats.con.consess{i_con+2}.tcon.weights = [1];
 job{3}.spm.stats.con.consess{i_con+2}.tcon.sessrep = 'none';
 
-% i_con = i_con + 3;
+i_con = i_con + 3;
 
 for i_cov = 1:width(covars)
 

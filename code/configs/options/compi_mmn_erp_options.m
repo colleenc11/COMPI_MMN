@@ -20,9 +20,9 @@ options.eeg.erp.contrastName        = 'mmn';
 options.eeg.erp.percentPe           = 10;
 
 options.eeg.erp.electrode   = 'Fz';
-options.eeg.erp.channels    = {'C1', 'Cz', 'C3', ...
+options.eeg.erp.channels    = {'C1', 'Cz', 'C3', 'C5', 'CP5',...
                                'P7', 'P8', 'PO7', 'PO8', ...
-                               'FC1', 'FC2', 'FCz', 'F1', 'F2'};
+                               'FC1', 'FC2', 'FC3', 'FCz', 'Fz', 'F1', 'F2', 'F3'};
 
 options.eeg.erp.overwrite   = 1;
 end
