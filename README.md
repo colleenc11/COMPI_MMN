@@ -1,8 +1,8 @@
-# Investigating the effects of volatility on the mismatch negativity in healthy controls: A computational modeling approach and its relevance to psychosocial functioning
+# Localizing Hierarchical Prediction Errors and Precisions During an Oddball Task with Volatility: Computational Insights and Relationship with Psychosocial Functioning in Healthy Individuals
 
 This repository contains Matlab code for reproducing the results in:
 
-Charlton, C. E., & Hauke, D. J., et al. (2023). _Investigating the effects of volatility on the mismatch negativity in healthy controls: A computational modeling approach and its relevance to psychosocial functioning._ (Under Review)
+Charlton, C. E., & Hauke, D. J., et al. (2024). _Localizing Hierarchical Prediction Errors and Precisions During an Oddball Task with Volatility: Computational Insights and Relationship with Psychosocial Functioning in Healthy Individuals._ (Under Review)
 
 ## Members of the project
 **Supervision:** Daniel J. Hauke, Andreea O. Diaconescu
