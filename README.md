@@ -2,7 +2,7 @@
 
 This repository contains Matlab code for reproducing the results in:
 
-Charlton, C. E., & Hauke, D. J., et al. (2024). _Localizing Hierarchical Prediction Errors and Precisions During an Oddball Task with Volatility: Computational Insights and Relationship with Psychosocial Functioning in Healthy Individuals._ (Under Review)
+Charlton, C. E., & Hauke, D. J., et al. (2025). _Localizing Hierarchical Prediction Errors and Precisions During an Oddball Task with Volatility: Computational Insights and Relationship with Psychosocial Functioning in Healthy Individuals._
 
 ## Members of the project
 **Supervision:** Daniel J. Hauke, Andreea O. Diaconescu
